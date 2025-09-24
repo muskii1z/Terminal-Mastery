@@ -34,12 +34,12 @@ export default function Home() {
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-text-primary mb-6 leading-tight">
                   Master the Terminal in{' '}
                   <span className="bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
-                    3-Minute Lessons
+                    under 2 Hours
                   </span>
                 </h1>
 
                 <p className="text-xl text-text-secondary mb-8 max-w-2xl lg:max-w-none leading-relaxed">
-                  Learn 20 essential Linux commands in ~1 hour total.{' '}
+                  Learn 20 essential Linux commands in under 2 hours total.{' '}
                   <span className="text-accent-blue font-medium">Interactive practice, quick quizzes, and progress tracking.</span>
                 </p>
 

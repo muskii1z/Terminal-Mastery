@@ -7,7 +7,7 @@ const HowItWorks: React.FC = () => {
     {
       number: "1",
       title: "Pick a lesson",
-      description: "3 min",
+      description: "6 min",
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -81,19 +81,31 @@ const HowItWorks: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {/* Lesson Interface Screenshot */}
             <div className="group">
-              <div className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                <div className="flex items-center justify-between px-3 py-2 bg-gray-800 border-b border-gray-700">
+              <div
+                className="rounded-lg border overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105"
+                style={{
+                  backgroundColor: 'var(--bg-tertiary)',
+                  borderColor: 'var(--border-primary)'
+                }}
+              >
+                <div
+                  className="flex items-center justify-between px-3 py-2 border-b"
+                  style={{
+                    backgroundColor: 'var(--bg-secondary)',
+                    borderColor: 'var(--border-primary)'
+                  }}
+                >
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                     <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   </div>
-                  <div className="text-xs text-gray-400">Lesson 2</div>
+                  <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Lesson 2</div>
                 </div>
                 <div className="p-4 font-mono text-xs">
-                  <div className="text-green-400 mb-2">$ pwd</div>
-                  <div className="text-gray-300 mb-3">/Users/student</div>
-                  <div className="text-blue-400 text-xs">✓ Correct! You used pwd to show current directory</div>
+                  <div className="mb-2" style={{ color: 'var(--accent-green)' }}>$ pwd</div>
+                  <div className="mb-3" style={{ color: 'var(--text-secondary)' }}>/Users/student</div>
+                  <div className="text-xs" style={{ color: 'var(--accent-blue)' }}>✓ Correct! You used pwd to show current directory</div>
                 </div>
               </div>
               <p className="text-center text-sm text-text-muted mt-3">Interactive Lessons</p>

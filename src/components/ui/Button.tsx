@@ -24,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
     primary: 'clean-button-primary',
     secondary: 'clean-button-secondary',
     ghost: 'bg-transparent text-text-primary hover:bg-bg-secondary',
-    danger: 'bg-error-red border border-error-red text-white hover:bg-red-700 hover:border-red-700'
+    danger: 'text-white' // Use style attribute for CSS custom properties
   };
 
   const sizeClasses = {
@@ -41,6 +41,11 @@ const Button: React.FC<ButtonProps> = ({
         ${sizeClasses[size]}
         ${className}
       `}
+      style={variant === 'danger' ? {
+        backgroundColor: 'var(--error-red)',
+        borderColor: 'var(--error-red)',
+        ...(props.style || {})
+      } : props.style}
       disabled={disabled || isLoading}
       {...props}
     >

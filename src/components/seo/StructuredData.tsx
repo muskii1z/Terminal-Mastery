@@ -6,7 +6,7 @@ const StructuredData: React.FC = () => {
   const courseData = {
     "@context": "https://schema.org",
     "@type": "Course",
-    "name": "Master the Linux Terminal in 3 Minutes a Day",
+    "name": "Master the Terminal in under 2 Hours",
     "description": "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
     "provider": {
       "@type": "Organization",
@@ -22,7 +22,7 @@ const StructuredData: React.FC = () => {
       }
     },
     "educationalLevel": "Beginner",
-    "timeRequired": "PT1H",
+    "timeRequired": "PT2H",
     "numberOfCredits": 0,
     "coursePrerequisites": "No experience required",
     "aggregateRating": {

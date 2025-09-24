@@ -32,7 +32,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onModeChange, onSucces
         : await signUp(email, password);
 
       if (error) {
-        setError(error.message);
+        setError(error && typeof error === 'object' && 'message' in error ? (error as any).message : 'Authentication failed');
       } else {
         setEmail('');
         setPassword('');
@@ -94,7 +94,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onModeChange, onSucces
           </div>
 
           {error && (
-            <div className="text-sm p-3 rounded-md bg-red-50 text-red-700 border border-red-200">
+            <div className="text-sm p-3 rounded-md border" style={{
+              backgroundColor: 'var(--bg-tertiary)',
+              color: 'var(--error-red)',
+              borderColor: 'var(--error-red)'
+            }}>
               {error}
             </div>
           )}

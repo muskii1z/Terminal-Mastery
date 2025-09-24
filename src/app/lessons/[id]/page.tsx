@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header';
 import { getLessonById, getNextLesson, getPreviousLesson } from '@/data/lessons';
 import { useAuth } from '@/context/AuthContext';
 import { useAppContext } from '@/context/AppContext';
+import { CommandExample } from '@/types';
 
 export default function LessonPage() {
   const { user, initialized } = useAuth();
@@ -78,6 +79,19 @@ export default function LessonPage() {
     return 1 + lesson.content.commands.length + 1 + 1 + 1; // intro + commands + practice + quiz + completion
   };
 
+  // Get step title for display
+  const getStepTitle = (lesson: any, stepIndex: number) => {
+    if (stepIndex === 0) return 'Introduction';
+    if (stepIndex <= lesson.content.commands.length) {
+      const commandIndex = stepIndex - 1;
+      return lesson.content.commands[commandIndex].name;
+    }
+    if (stepIndex === lesson.content.commands.length + 1) return 'Practice';
+    if (stepIndex === lesson.content.commands.length + 2) return 'Quiz';
+    if (stepIndex === getStepCount(lesson) - 1) return 'Complete';
+    return '';
+  };
+
   // Keyboard navigation for stepper
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft' && currentStepIndex > 0) {
@@ -87,7 +101,7 @@ export default function LessonPage() {
       event.preventDefault();
       goToNextStep();
     }
-  }, [currentStepIndex]);
+  }, [currentStepIndex, goToNextStep, goToPreviousStep]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -102,10 +116,9 @@ export default function LessonPage() {
       // Introduction step
       return (
         <div className="step-content">
-          <h2 className="text-2xl font-bold mb-6">Introduction</h2>
           <div className="prose prose-invert max-w-none">
             {lesson.content.introduction.split('\n\n').map((paragraph: string, index: number) => (
-              <p key={index} className="text-gray-300 leading-relaxed mb-4">
+              <p key={index} className="text-gray-300 leading-relaxed mb-6">
                 {paragraph.trim()}
               </p>
             ))}
@@ -118,8 +131,6 @@ export default function LessonPage() {
       const command = lesson.content.commands[commandIndex];
       return (
         <div className="step-content">
-          <h2 className="text-2xl font-bold mb-6">Command: {command.name}</h2>
-
           <div className="bg-gray-900 border border-gray-600 rounded-lg p-6 mb-6">
             <h3 className="text-lg text-green-400 font-mono mb-3">
               {command.name}
@@ -136,27 +147,32 @@ export default function LessonPage() {
             </div>
 
             <div>
-              <strong className="text-sm text-white mb-2 block">Example:</strong>
-              <div className="bg-gray-800 rounded p-3">
-                <div className="font-mono text-sm mb-2">
-                  <span className="text-blue-400">$ </span>
-                  <span className="text-green-400">{command.examples[0].command}</span>
-                </div>
-                {command.examples[0].output && (
-                  <div className="font-mono text-sm text-gray-400 mb-2 whitespace-pre-line">
-                    {command.examples[0].output}
+              <strong className="text-sm text-white mb-2 block">{command.examples.length > 1 ? 'Examples:' : 'Example:'}</strong>
+              {command.examples.map((example: CommandExample, exampleIndex) => (
+                <div key={exampleIndex} className="bg-gray-800 rounded p-3 mb-3 last:mb-0">
+                  <div className="font-mono text-sm mb-2">
+                    <span className="text-blue-400">$ </span>
+                    <span className="text-green-400">{example.command}</span>
                   </div>
-                )}
-                <p className="text-xs text-gray-500">
-                  {command.examples[0].explanation}
-                </p>
-              </div>
+                  {example.output && (
+                    <div className="font-mono text-sm text-gray-400 mb-2 whitespace-pre-line">
+                      {example.output}
+                    </div>
+                  )}
+                  <p className="text-sm text-white">
+                    {example.explanation}
+                  </p>
+                </div>
+              ))}
             </div>
 
             <div className="mt-4 p-3 bg-blue-900 border border-blue-600 rounded">
               <h4 className="text-sm text-blue-200 mb-2">💡 Try it yourself!</h4>
               <p className="text-sm text-blue-300">
                 Open your terminal and try running: <code className="bg-blue-800 px-1 rounded">{command.examples[0].command}</code>
+                {command.examples.length > 1 && (
+                  <span>, or explore the options like <code className="bg-blue-800 px-1 rounded">{command.examples[1]?.command}</code></span>
+                )}
               </p>
             </div>
           </div>
@@ -166,8 +182,6 @@ export default function LessonPage() {
       // Practice step
       return (
         <div className="step-content">
-          <h2 className="text-2xl font-bold mb-6">Practice Exercises</h2>
-
           {lesson.content.practice.map((exercise: any, index: number) => (
             <div key={exercise.id} className="bg-gray-900 border border-gray-600 rounded-lg p-5 mb-5">
               <div className="mb-4">
@@ -236,103 +250,99 @@ export default function LessonPage() {
       // Quiz step
       return (
         <div className="step-content">
-          <h2 className="text-2xl font-bold mb-6">Knowledge Check</h2>
-
           {!quizCompleted ? (
             <div className="bg-gray-900 border border-gray-600 rounded-lg p-6">
               {!showResults ? (
-                // Quiz Questions
                 <div>
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-400 mb-2">
-                      Question {currentQuestionIndex + 1} of {lesson.quiz.questions.length}
+                    <div className="mb-4">
+                      <div className="text-sm text-gray-400 mb-2">
+                        Question {currentQuestionIndex + 1} of {lesson.quiz?.questions.length}
+                      </div>
+                      <div className="bg-gray-800 h-1 rounded mb-3">
+                        <div
+                          className="bg-blue-600 h-full rounded transition-all duration-300"
+                          style={{width: `${((currentQuestionIndex + 1) / (lesson.quiz?.questions.length || 1)) * 100}%`}}
+                        />
+                      </div>
                     </div>
-                    <div className="bg-gray-800 h-1 rounded mb-3">
-                      <div
-                        className="bg-blue-600 h-full rounded transition-all duration-300"
-                        style={{width: `${((currentQuestionIndex + 1) / lesson.quiz.questions.length) * 100}%`}}
-                      />
+
+                    <div className="mb-5">
+                      <h3 className="text-lg text-white mb-4 leading-relaxed">
+                        {lesson.quiz?.questions[currentQuestionIndex]?.question}
+                      </h3>
+
+                      <div className="flex flex-col gap-3">
+                        {lesson.quiz?.questions[currentQuestionIndex]?.options.map((option: string, optionIndex: number) => (
+                          <button
+                            key={optionIndex}
+                            onClick={() => {
+                              setSelectedAnswers(prev => ({
+                                ...prev,
+                                [currentQuestionIndex]: optionIndex
+                              }));
+                            }}
+                            className={`
+                              ${selectedAnswers[currentQuestionIndex] === optionIndex
+                                ? 'bg-blue-600 border-blue-600 text-white'
+                                : 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700'
+                              }
+                              border p-4 rounded-lg cursor-pointer text-left text-sm transition-all duration-200 flex items-center gap-3
+                            `}
+                          >
+                            <span className="w-5 h-5 rounded-full border-2 border-current flex items-center justify-center text-xs font-bold">
+                              {String.fromCharCode(65 + optionIndex)}
+                            </span>
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <button
+                        onClick={() => {
+                          if (currentQuestionIndex > 0) {
+                            setCurrentQuestionIndex(currentQuestionIndex - 1);
+                          }
+                        }}
+                        disabled={currentQuestionIndex === 0}
+                        className={`
+                          bg-transparent border border-gray-600 px-4 py-2 rounded-md text-sm
+                          ${currentQuestionIndex === 0
+                            ? 'text-gray-500 cursor-not-allowed'
+                            : 'text-white cursor-pointer hover:bg-gray-700'
+                          }
+                        `}
+                      >
+                        {'<- Previous'}
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          if (currentQuestionIndex < (lesson.quiz?.questions.length || 0) - 1) {
+                            setCurrentQuestionIndex(currentQuestionIndex + 1);
+                          } else {
+                            setShowResults(true);
+                          }
+                        }}
+                        disabled={selectedAnswers[currentQuestionIndex] === undefined}
+                        className={`
+                          border-0 px-4 py-2 rounded-md text-sm font-medium
+                          ${selectedAnswers[currentQuestionIndex] !== undefined
+                            ? 'bg-blue-600 text-white cursor-pointer hover:bg-blue-700'
+                            : 'bg-gray-600 text-white cursor-not-allowed'
+                          }
+                        `}
+                      >
+                        {currentQuestionIndex < (lesson.quiz?.questions.length || 0) - 1 ? 'Next →' : 'Show Results'}
+                      </button>
                     </div>
                   </div>
-
-                  <div className="mb-5">
-                    <h3 className="text-lg text-white mb-4 leading-relaxed">
-                      {lesson.quiz.questions[currentQuestionIndex].question}
-                    </h3>
-
-                    <div className="flex flex-col gap-3">
-                      {lesson.quiz.questions[currentQuestionIndex].options.map((option: string, optionIndex: number) => (
-                        <button
-                          key={optionIndex}
-                          onClick={() => {
-                            setSelectedAnswers(prev => ({
-                              ...prev,
-                              [currentQuestionIndex]: optionIndex
-                            }));
-                          }}
-                          className={`
-                            ${selectedAnswers[currentQuestionIndex] === optionIndex
-                              ? 'bg-blue-600 border-blue-600 text-white'
-                              : 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700'
-                            }
-                            border p-4 rounded-lg cursor-pointer text-left text-sm transition-all duration-200 flex items-center gap-3
-                          `}
-                        >
-                          <span className="w-5 h-5 rounded-full border-2 border-current flex items-center justify-center text-xs font-bold">
-                            {String.fromCharCode(65 + optionIndex)}
-                          </span>
-                          {option}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <button
-                      onClick={() => {
-                        if (currentQuestionIndex > 0) {
-                          setCurrentQuestionIndex(currentQuestionIndex - 1);
-                        }
-                      }}
-                      disabled={currentQuestionIndex === 0}
-                      className={`
-                        bg-transparent border border-gray-600 px-4 py-2 rounded-md text-sm
-                        ${currentQuestionIndex === 0
-                          ? 'text-gray-500 cursor-not-allowed'
-                          : 'text-white cursor-pointer hover:bg-gray-700'
-                        }
-                      `}
-                    >
-                      ← Previous
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        if (currentQuestionIndex < lesson.quiz!.questions.length - 1) {
-                          setCurrentQuestionIndex(currentQuestionIndex + 1);
-                        } else {
-                          setShowResults(true);
-                        }
-                      }}
-                      disabled={selectedAnswers[currentQuestionIndex] === undefined}
-                      className={`
-                        border-0 px-4 py-2 rounded-md text-sm font-medium
-                        ${selectedAnswers[currentQuestionIndex] !== undefined
-                          ? 'bg-blue-600 text-white cursor-pointer hover:bg-blue-700'
-                          : 'bg-gray-600 text-white cursor-not-allowed'
-                        }
-                      `}
-                    >
-                      {currentQuestionIndex < lesson.quiz!.questions.length - 1 ? 'Next →' : 'Show Results'}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                // Quiz Results
+                ) : (
                 <div>
                   <h3 className="text-lg text-white mb-5">Quiz Results</h3>
 
-                  {lesson.quiz.questions.map((question: any, qIndex: number) => {
+                  {lesson.quiz?.questions.map((question: any, qIndex: number) => {
                     const userAnswer = selectedAnswers[qIndex];
                     const isCorrect = userAnswer === question.correctAnswer;
 
@@ -379,8 +389,8 @@ export default function LessonPage() {
                   <div className="text-center mt-5 p-4 bg-gray-800 rounded-lg">
                     <div className="text-lg text-white mb-2">
                       Score: {Object.values(selectedAnswers).filter((answer, index) =>
-                        answer === lesson.quiz!.questions[index].correctAnswer
-                      ).length} / {lesson.quiz.questions.length}
+                        answer === lesson.quiz?.questions[index]?.correctAnswer
+                      ).length} / {lesson.quiz?.questions.length}
                     </div>
                     <div className="flex gap-3 justify-center">
                       <button
@@ -509,7 +519,7 @@ export default function LessonPage() {
             {nextLesson && (
               <Link href={`/lessons/${nextLesson.id}`} className="no-underline" scroll={false}>
                 <button className="bg-blue-600 border-0 text-white px-6 py-3 rounded-md cursor-pointer font-medium hover:bg-blue-700">
-                  Next Lesson: {nextLesson.title} →
+                  Next Lesson: {nextLesson.title} {'→'}
                 </button>
               </Link>
             )}
@@ -581,73 +591,88 @@ export default function LessonPage() {
   // All lessons now use stepper format
   if (lesson) {
     const totalSteps = getStepCount(lesson);
-    const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
 
     return (
       <>
         <Header />
-        <div className="min-h-screen bg-gray-900 text-white">
-          {/* Progress Header */}
-          <div className="sticky top-20 z-10 bg-gray-800 border-b border-gray-600 px-4 py-6">
-            <div className="max-w-4xl mx-auto">
-              {/* Progress Bar */}
-              <div className="mb-5">
-                <div className="flex justify-between items-center mb-2">
-                  <h1 className="text-lg font-semibold">{lesson.title}</h1>
-                  <span className="text-sm text-gray-400">
-                    {currentStepIndex + 1} / {totalSteps}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${progressPercentage}%` }}
-                  />
-                </div>
-              </div>
+        <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+          {/* Compact Header */}
+          <div className="sticky top-20 z-10 bg-gray-800/95 border-b border-gray-600 mb-12">
+            {/* Background Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-bg-primary via-bg-secondary to-bg-tertiary opacity-50"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/5 to-accent-purple/5"></div>
 
-              {/* Step Dots */}
-              <div className="flex justify-center gap-2">
-                {Array.from({ length: totalSteps }, (_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToStep(index)}
-                    className={`
-                      w-3 h-3 rounded-full transition-all duration-200
-                      ${index === currentStepIndex
-                        ? 'bg-blue-600 scale-125'
-                        : completedSteps.has(index)
-                        ? 'bg-green-600 hover:bg-green-500'
-                        : 'bg-gray-600 hover:bg-gray-500'
-                      }
-                    `}
-                    aria-label={`Go to step ${index + 1}`}
-                  />
-                ))}
+            <div className="relative px-4 py-8">
+              <div className="max-w-4xl mx-auto">
+                {/* Top row with Back button and metadata */}
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <Link href="/lessons" className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors text-base">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back
+                  </Link>
+
+                  <div className="flex items-center gap-3 text-base text-gray-300 font-medium">
+                    <span>Lesson {lessonId} of 20</span>
+                    <span>•</span>
+                    <span>{currentStepIndex + 1} / {totalSteps}</span>
+                  </div>
+                </div>
+
+                {/* Centered title */}
+                <div className="text-center mb-4">
+                  <h1 className="text-xl font-semibold text-white">
+                    Lesson {lessonId}: {lesson.title}
+                  </h1>
+                </div>
+
+                {/* Centered progress dots */}
+                <div className="flex justify-center">
+                  <div className="flex gap-2" role="progressbar" aria-label="Lesson steps">
+                    {Array.from({ length: totalSteps }, (_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToStep(index)}
+                        className={`
+                          w-4 h-4 rounded-full transition-all duration-200 focus:ring-1 focus:ring-blue-500 focus:outline-none flex-shrink-0
+                          ${index === currentStepIndex
+                            ? 'bg-blue-600'
+                            : completedSteps.has(index)
+                            ? 'bg-green-600 hover:bg-green-500'
+                            : 'bg-gray-600 hover:bg-gray-500'
+                          }
+                        `}
+                        aria-label={`Go to step ${index + 1}`}
+                        aria-current={index === currentStepIndex ? 'step' : undefined}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Step Content */}
-          <div className="flex-1 px-4 py-8">
-            <div className="max-w-4xl mx-auto">
-              <div className="min-h-[60vh]">
+          <div className="flex-1 px-4 py-12 mt-8 pb-8">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-lg leading-relaxed">
                 {renderStepperStep(lesson, currentStepIndex)}
               </div>
             </div>
           </div>
 
           {/* Navigation Controls */}
-          <div className="sticky bottom-0 bg-gray-800 border-t border-gray-600 px-4 py-5">
-            <div className="max-w-4xl mx-auto flex justify-between items-center">
+          <div className="mt-auto bg-gray-800/95 border-t border-gray-600 px-4 py-6">
+            <div className="max-w-3xl mx-auto flex justify-between items-center">
               <button
                 onClick={goToPreviousStep}
                 disabled={currentStepIndex === 0}
                 className={`
-                  flex items-center gap-2 px-4 py-2 rounded-md border transition-all duration-200
+                  flex items-center gap-2 px-6 py-3 rounded-md border transition-all duration-200 min-h-[44px]
                   ${currentStepIndex === 0
                     ? 'border-gray-600 text-gray-500 cursor-not-allowed'
-                    : 'border-gray-600 text-white hover:bg-gray-700 focus:ring-2 focus:ring-blue-500'
+                    : 'border-gray-600 text-white hover:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none'
                   }
                 `}
                 aria-label="Go to previous step"
@@ -658,23 +683,14 @@ export default function LessonPage() {
                 Back
               </button>
 
-              {/* Step Title */}
-              <h2 className="text-lg font-medium text-center">
-                {currentStepIndex === 0 && 'Introduction'}
-                {currentStepIndex > 0 && currentStepIndex <= lesson.content.commands.length && `Command: ${lesson.content.commands[currentStepIndex - 1].name}`}
-                {currentStepIndex === lesson.content.commands.length + 1 && 'Practice'}
-                {currentStepIndex === lesson.content.commands.length + 2 && 'Quiz'}
-                {currentStepIndex === totalSteps - 1 && 'Complete'}
-              </h2>
-
               <button
                 onClick={goToNextStep}
                 disabled={currentStepIndex === totalSteps - 1}
                 className={`
-                  flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200
+                  flex items-center gap-2 px-6 py-3 rounded-md transition-all duration-200 min-h-[44px]
                   ${currentStepIndex === totalSteps - 1
                     ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500'
+                    : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none'
                   }
                 `}
                 aria-label="Go to next step"

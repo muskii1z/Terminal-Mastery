@@ -23,39 +23,56 @@ const TerminalMockup: React.FC<TerminalMockupProps> = ({ className = '' }) => {
   }, [commands.length]);
 
   return (
-    <div className={`bg-gray-900 rounded-lg border border-gray-700 overflow-hidden shadow-2xl ${className}`}>
+    <div
+      className={`rounded-lg border overflow-hidden shadow-2xl ${className}`}
+      style={{
+        backgroundColor: 'var(--bg-tertiary)',
+        borderColor: 'var(--border-primary)'
+      }}
+    >
       {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+      <div
+        className="flex items-center justify-between px-4 py-3 border-b"
+        style={{
+          backgroundColor: 'var(--bg-secondary)',
+          borderColor: 'var(--border-primary)'
+        }}
+      >
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
           <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
         </div>
-        <div className="text-sm text-gray-400 font-mono">Terminal</div>
+        <div
+          className="text-sm font-mono"
+          style={{ color: 'var(--text-muted)' }}
+        >
+          Terminal
+        </div>
         <div className="w-16"></div>
       </div>
 
       {/* Terminal Content */}
       <div className="p-4 font-mono text-sm leading-relaxed">
-        <div className="text-green-400 mb-2">
+        <div className="mb-2" style={{ color: 'var(--accent-green)' }}>
           student@terminal-mastery:~$
         </div>
 
         {/* Current Command */}
         <div className="mb-4">
-          <div className="text-white">
-            <span className="text-green-400">$ </span>
-            <span className="text-blue-300">{commands[currentCommand].command}</span>
-            <span className="animate-pulse ml-1 text-white">|</span>
+          <div style={{ color: 'var(--text-primary)' }}>
+            <span style={{ color: 'var(--accent-green)' }}>$ </span>
+            <span style={{ color: 'var(--accent-blue)' }}>{commands[currentCommand].command}</span>
+            <span className="animate-pulse ml-1" style={{ color: 'var(--text-primary)' }}>|</span>
           </div>
-          <div className="text-gray-300 mt-2 whitespace-pre-line">
+          <div className="mt-2 whitespace-pre-line" style={{ color: 'var(--text-secondary)' }}>
             {commands[currentCommand].output}
           </div>
         </div>
 
         {/* Progress Indicator */}
-        <div className="flex items-center gap-2 text-gray-500 text-xs">
-          <div className="text-yellow-400">✓</div>
+        <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+          <div style={{ color: 'var(--warning-yellow)' }}>✓</div>
           <span>Lesson 2/20: Navigation Commands</span>
         </div>
       </div>

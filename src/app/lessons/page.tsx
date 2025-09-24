@@ -166,7 +166,7 @@ export default function LessonsPage() {
               Terminal Mastery Lessons
             </h1>
             <p className="text-text-secondary text-lg mb-6 max-w-2xl mx-auto">
-              Learn Linux commands step by step. Each lesson takes about 3 minutes and includes hands-on practice.
+              Learn Linux commands step by step. Each lesson takes about 6 minutes and includes hands-on practice.
             </p>
             
             {/* Progress Overview */}

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import FloatingBackground from "@/components/ui/FloatingBackground";
 
 const geistSans = Geist({
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://terminal-mastery.com'),
-  title: "Master the Linux Terminal in 3 Minutes a Day | Terminal Mastery",
+  title: "Master the Terminal in under 2 Hours | Terminal Mastery",
   description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
   keywords: "linux terminal, command line, terminal tutorial, bash commands, learn terminal, terminal course, linux commands",
   authors: [{ name: "Terminal Mastery" }],
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   publisher: "Terminal Mastery",
   category: "Education",
   openGraph: {
-    title: "Master the Linux Terminal in 3 Minutes a Day",
+    title: "Master the Terminal in under 2 Hours",
     description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
     url: "https://terminal-mastery.com",
     siteName: "Terminal Mastery",
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Master the Linux Terminal in 3 Minutes a Day",
+    title: "Master the Terminal in under 2 Hours",
     description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
     images: ["/og-image.png"],
     creator: "@terminal_mastery",
@@ -73,16 +74,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-bg-primary text-text-primary`}
       >
-        <AuthProvider>
-          <AppProvider>
-            <div className="min-h-screen bg-bg-primary relative">
-              <FloatingBackground />
-              <main>
-                {children}
-              </main>
-            </div>
-          </AppProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <AppProvider>
+              <div className="min-h-screen bg-bg-primary relative">
+                <FloatingBackground />
+                <main>
+                  {children}
+                </main>
+              </div>
+            </AppProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
