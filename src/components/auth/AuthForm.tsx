@@ -32,14 +32,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onModeChange, onSucces
         : await signUp(email, password);
 
       if (error) {
-        setError(error && typeof error === 'object' && 'message' in error ? (error as any).message : 'Authentication failed');
+        setError(error && typeof error === 'object' && 'message' in error ? (error as { message: string }).message : 'Authentication failed');
       } else {
         setEmail('');
         setPassword('');
         setError('');
         onSuccess?.();
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
     }
   };

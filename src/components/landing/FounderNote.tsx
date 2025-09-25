@@ -21,7 +21,7 @@ const FounderNote: React.FC = () => {
             </div>
 
             <blockquote className="text-lg text-text-secondary leading-relaxed mb-6">
-              &quot;I could ship projects with AI, but I didn&apos;t understand the fundamentals. I built this to learn the terminal the right way — and share the path with other beginners.&quot;
+              &ldquo;I could ship projects with AI, but I didn&apos;t understand the fundamentals. I built this to learn the terminal the right way — and share the path with other beginners.&rdquo;
             </blockquote>
 
             <div className="flex items-center justify-center gap-3 text-text-muted">

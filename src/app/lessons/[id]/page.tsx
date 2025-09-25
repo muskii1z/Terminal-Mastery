@@ -4,10 +4,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
-import { getLessonById, getNextLesson, getPreviousLesson } from '@/data/lessons';
+import { getLessonById, getNextLesson } from '@/data/lessons';
 import { useAuth } from '@/context/AuthContext';
 import { useAppContext } from '@/context/AppContext';
-import { CommandExample } from '@/types';
+import { CommandExample, Lesson, PracticeExercise, QuizQuestion } from '@/types';
 
 export default function LessonPage() {
   const { user, initialized } = useAuth();
@@ -47,7 +47,7 @@ export default function LessonPage() {
   };
 
   // Stepper navigation functions
-  const goToNextStep = () => {
+  const goToNextStep = useCallback(() => {
     const lesson = getLessonById(lessonId);
     if (!lesson) return;
 
@@ -56,13 +56,13 @@ export default function LessonPage() {
       setCurrentStepIndex(currentStepIndex + 1);
       setCompletedSteps(prev => new Set([...prev, currentStepIndex]));
     }
-  };
+  }, [lessonId, currentStepIndex]);
 
-  const goToPreviousStep = () => {
+  const goToPreviousStep = useCallback(() => {
     if (currentStepIndex > 0) {
       setCurrentStepIndex(currentStepIndex - 1);
     }
-  };
+  }, [currentStepIndex]);
 
   const goToStep = (stepIndex: number) => {
     const lesson = getLessonById(lessonId);
@@ -75,22 +75,11 @@ export default function LessonPage() {
   };
 
   // Get total step count for a lesson
-  const getStepCount = (lesson: any) => {
+  const getStepCount = (lesson: Lesson) => {
     return 1 + lesson.content.commands.length + 1 + 1 + 1; // intro + commands + practice + quiz + completion
   };
 
-  // Get step title for display
-  const getStepTitle = (lesson: any, stepIndex: number) => {
-    if (stepIndex === 0) return 'Introduction';
-    if (stepIndex <= lesson.content.commands.length) {
-      const commandIndex = stepIndex - 1;
-      return lesson.content.commands[commandIndex].name;
-    }
-    if (stepIndex === lesson.content.commands.length + 1) return 'Practice';
-    if (stepIndex === lesson.content.commands.length + 2) return 'Quiz';
-    if (stepIndex === getStepCount(lesson) - 1) return 'Complete';
-    return '';
-  };
+  // Note: getStepTitle function removed as it was unused
 
   // Keyboard navigation for stepper
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -109,7 +98,7 @@ export default function LessonPage() {
   }, [handleKeyDown]);
 
   // Stepper step renderer functions
-  const renderStepperStep = (lesson: any, stepIndex: number) => {
+  const renderStepperStep = (lesson: Lesson, stepIndex: number) => {
     const totalSteps = getStepCount(lesson);
 
     if (stepIndex === 0) {
@@ -182,7 +171,7 @@ export default function LessonPage() {
       // Practice step
       return (
         <div className="step-content">
-          {lesson.content.practice.map((exercise: any, index: number) => (
+          {lesson.content.practice.map((exercise: PracticeExercise, index: number) => (
             <div key={exercise.id} className="bg-gray-900 border border-gray-600 rounded-lg p-5 mb-5">
               <div className="mb-4">
                 <h3 className="text-base text-white mb-2 flex items-center gap-2">
@@ -342,7 +331,7 @@ export default function LessonPage() {
                 <div>
                   <h3 className="text-lg text-white mb-5">Quiz Results</h3>
 
-                  {lesson.quiz?.questions.map((question: any, qIndex: number) => {
+                  {lesson.quiz?.questions.map((question: QuizQuestion, qIndex: number) => {
                     const userAnswer = selectedAnswers[qIndex];
                     const isCorrect = userAnswer === question.correctAnswer;
 
@@ -421,7 +410,7 @@ export default function LessonPage() {
                 ✅ Quiz Completed!
               </div>
               <div className="text-gray-400 text-sm mb-4">
-                Great job! You've completed the knowledge check for this lesson.
+                Great job! You&apos;ve completed the knowledge check for this lesson.
               </div>
               <button
                 onClick={() => {
@@ -447,7 +436,7 @@ export default function LessonPage() {
             <div className="text-4xl mb-3">🎉</div>
             <h2 className="text-2xl font-bold mb-3 text-green-400">Lesson Complete!</h2>
             <p className="text-lg text-gray-300 mb-4">
-              Congratulations! You've mastered the {lesson.title.toLowerCase()}.
+              Congratulations! You&apos;ve mastered the {lesson.title.toLowerCase()}.
             </p>
           </div>
 
@@ -565,7 +554,7 @@ export default function LessonPage() {
   // Get lesson data
   const lesson = getLessonById(lessonId);
   const nextLesson = getNextLesson(lessonId);
-  const previousLesson = getPreviousLesson(lessonId);
+  // Note: previousLesson variable removed as it was unused
   
   // If lesson not found, show error
   if (!lesson) {

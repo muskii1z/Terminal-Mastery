@@ -12,8 +12,7 @@ const ThemeToggle: React.FC = () => {
       className="p-2 rounded-md transition-all duration-200 focus:ring-2 focus:outline-none"
       style={{
         backgroundColor: 'transparent',
-        color: 'var(--text-secondary)',
-        focusRingColor: 'var(--accent-blue)'
+        color: 'var(--text-secondary)'
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';

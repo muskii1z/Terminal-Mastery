@@ -35,6 +35,7 @@ export interface PracticeExercise {
   prompt: string;
   expectedCommand: string;
   hints?: string[];
+  explanation?: string;
   completed: boolean;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
@@ -25,14 +25,14 @@ export default function LessonsPage() {
   const [selectedSort, setSelectedSort] = useState<'lesson-order' | 'status' | 'duration'>('lesson-order');
 
   // Helper function to determine lesson status
-  const getLessonStatus = (lessonId: string) => {
+  const getLessonStatus = useCallback((lessonId: string) => {
     const isCompleted = userProgress.lessonsCompleted.includes(lessonId);
     const isCurrent = userProgress.currentLesson === lessonId;
 
     if (isCompleted) return 'completed';
     if (isCurrent) return 'in-progress';
     return 'not-started';
-  };
+  }, [userProgress.lessonsCompleted, userProgress.currentLesson]);
 
   // Resume functionality
   const handleResume = async () => {
@@ -63,7 +63,7 @@ export default function LessonsPage() {
 
   // Filtered and sorted lessons
   const filteredLessons = useMemo(() => {
-    let filtered = lessons.filter(lesson => {
+    const filtered = lessons.filter(lesson => {
       // Search filter
       const matchesSearch = searchQuery === '' ||
         lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -95,7 +95,7 @@ export default function LessonsPage() {
     });
 
     return filtered;
-  }, [lessons, searchQuery, selectedFilter, selectedSort, userProgress]);
+  }, [searchQuery, selectedFilter, selectedSort, getLessonStatus]);
 
   // Stats for filtered lessons
   const filteredStats = useMemo(() => {
@@ -258,7 +258,7 @@ export default function LessonsPage() {
                     ].map(({ key, label, count }) => (
                       <button
                         key={key}
-                        onClick={() => setSelectedFilter(key as any)}
+                        onClick={() => setSelectedFilter(key as 'all' | 'not-started' | 'in-progress' | 'completed')}
                         aria-pressed={selectedFilter === key}
                         aria-label={`Filter by ${label} lessons (${count} lessons)`}
                         className={`
@@ -285,7 +285,7 @@ export default function LessonsPage() {
                   <select
                     id="sort-select"
                     value={selectedSort}
-                    onChange={(e) => setSelectedSort(e.target.value as any)}
+                    onChange={(e) => setSelectedSort(e.target.value as 'lesson-order' | 'status' | 'duration')}
                     aria-label="Sort lessons by"
                     className="flex-1 sm:flex-none bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
                   >
@@ -303,7 +303,7 @@ export default function LessonsPage() {
                     Showing {filteredLessons.length} of {lessons.length} lessons
                     {searchQuery && (
                       <span className="ml-1">
-                        matching "<span className="text-blue-400">{searchQuery}</span>"
+                        matching &ldquo;<span className="text-blue-400">{searchQuery}</span>&rdquo;
                       </span>
                     )}
                   </p>
@@ -315,7 +315,7 @@ export default function LessonsPage() {
           {/* Lessons Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {filteredLessons.length > 0 ? (
-              filteredLessons.map((lesson, index) => {
+              filteredLessons.map((lesson) => {
                 const lessonStatus = getLessonStatus(lesson.id);
                 const isCompleted = lessonStatus === 'completed';
                 const isInProgress = lessonStatus === 'in-progress';

@@ -1431,8 +1431,7 @@ export const lessons: Lesson[] = [
           correctAnswer: 1,
           explanation: 'find . -name "*.jpg" searches from current directory (.) for files matching the pattern *.jpg.'
         }
-      ],
-      bridgeToNext: `Once you can find text, let's edit text files directly from the terminal.`
+      ]
     }
   },
 
@@ -1551,7 +1550,8 @@ export const lessons: Lesson[] = [
             'This will open nano with an empty file',
             'If nano doesn\'t open, check that it\'s installed on your system'
           ],
-          explanation: 'Opens nano editor with an empty file named practice.txt'
+          explanation: 'Opens nano editor with an empty file named practice.txt',
+          completed: false
         },
         {
           id: 'p8-2',
@@ -1563,7 +1563,8 @@ export const lessons: Lesson[] = [
             'Press Enter to confirm the filename',
             'You should see "[ Wrote X lines ]" confirmation'
           ],
-          explanation: 'Ctrl+O saves the current file'
+          explanation: 'Ctrl+O saves the current file',
+          completed: false
         },
         {
           id: 'p8-3',
@@ -1575,7 +1576,8 @@ export const lessons: Lesson[] = [
             'Move cursor to a new position',
             'Press Ctrl+U to paste the line'
           ],
-          explanation: 'Ctrl+K cuts lines, Ctrl+U pastes them back'
+          explanation: 'Ctrl+K cuts lines, Ctrl+U pastes them back',
+          completed: false
         },
         {
           id: 'p8-4',
@@ -1587,7 +1589,8 @@ export const lessons: Lesson[] = [
             'Press Enter to search',
             'The cursor will jump to the found text'
           ],
-          explanation: 'Ctrl+W opens the search function in nano'
+          explanation: 'Ctrl+W opens the search function in nano',
+          completed: false
         },
         {
           id: 'p8-5',
@@ -1599,10 +1602,22 @@ export const lessons: Lesson[] = [
             'You should see the text you typed',
             'If file is empty, the save didn\'t work'
           ],
-          explanation: 'Ctrl+X exits nano, cat displays file contents'
+          explanation: 'Ctrl+X exits nano, cat displays file contents',
+          completed: false
         }
       ],
-      bridgeToNext: `Now that you can edit files directly from the terminal, let's learn how to process text data with commands like sort, uniq, and wc.`
+      summary: `
+        Great! You now know how to edit files directly in the terminal using nano. These keyboard shortcuts are essential for configuration editing, script writing, and quick text modifications.
+
+        Essential nano shortcuts:
+        • **Ctrl+O** → Save your work
+        • **Ctrl+X** → Exit editor
+        • **Ctrl+K** → Cut line
+        • **Ctrl+U** → Paste line
+        • **Ctrl+W** → Search text
+
+        Next, we'll learn how to process and analyze text data using commands like sort, uniq, and wc.
+      `
     }
   },
 
@@ -1757,8 +1772,7 @@ export const lessons: Lesson[] = [
           correctAnswer: 1,
           explanation: 'wc -l counts the number of lines in a file.'
         }
-      ],
-      bridgeToNext: `Next, we'll look at more powerful matching with wildcards and regex.`
+      ]
     }
   },
 
@@ -1894,8 +1908,7 @@ export const lessons: Lesson[] = [
           correctAnswer: 1,
           explanation: 'The * wildcard matches zero or more characters, so *.log matches any file ending in .log.'
         }
-      ],
-      bridgeToNext: `Once you can match patterns, it's time to manage running processes.`
+      ]
     }
   },
 
@@ -2052,8 +2065,7 @@ export const lessons: Lesson[] = [
           correctAnswer: 2,
           explanation: 'kill -9 sends SIGKILL signal which forces immediate termination - the process cannot ignore this signal.'
         }
-      ],
-      bridgeToNext: `Now that you can manage processes, let's check system info.`
+      ]
     }
   },
 
@@ -2216,8 +2228,7 @@ export const lessons: Lesson[] = [
           correctAnswer: 1,
           explanation: 'The free command displays information about memory (RAM) usage, including total, used, and available memory.'
         }
-      ],
-      bridgeToNext: `Once you understand system resources, let's learn network troubleshooting.`
+      ]
     }
   },
 

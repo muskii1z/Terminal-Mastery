@@ -4,6 +4,7 @@ export interface LessonProgress {
   userId: string;
   lessonsCompleted: string[];
   currentLesson: string | null;
+  quizScores: Record<string, number>;
   totalProgress: number; // percentage
   totalLessons: number;
   completedCount: number;
@@ -97,6 +98,7 @@ export async function getProgressForUser(userId: string): Promise<LessonProgress
     userId,
     lessonsCompleted: completedLessonIds,
     currentLesson: nextIncompleteLesson?.id || null,
+    quizScores: {}, // Initialize empty quiz scores object
     totalProgress,
     totalLessons,
     completedCount
