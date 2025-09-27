@@ -95,6 +95,24 @@ const Header: React.FC = () => {
                       }}>
                         {user.email}
                       </div>
+                      <Link href="/account" className="no-underline" scroll={false}>
+                        <button
+                          className="w-full text-left px-4 py-2 text-sm transition-colors"
+                          style={{
+                            color: 'var(--text-secondary)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)';
+                            e.currentTarget.style.color = 'var(--text-primary)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = 'var(--text-secondary)';
+                          }}
+                        >
+                          Account Settings
+                        </button>
+                      </Link>
                       <button
                         onClick={handleSignOut}
                         disabled={loading}
@@ -128,7 +146,7 @@ const Header: React.FC = () => {
 
               <Link href="/signup" className="no-underline" scroll={false}>
                 <button className="clean-button-primary text-sm font-medium px-4 py-2">
-                  Get Started
+                  Sign Up
                 </button>
               </Link>
             </>

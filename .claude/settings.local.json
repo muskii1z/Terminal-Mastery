@@ -5,7 +5,8 @@
       "Bash(npm run dev:*)",
       "Bash(node:*)",
       "Bash(npm run build:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:docs.claude.com)"
     ],
     "deny": [],
     "ask": []

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import AlertMessage from '@/components/ui/AlertMessage';
 
 interface AuthFormProps {
   mode: 'login' | 'signup';
@@ -16,10 +17,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onModeChange, onSucces
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
 
     if (!email || !password) {
       setError('Please fill in all fields');
@@ -34,10 +37,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onModeChange, onSucces
       if (error) {
         setError(error && typeof error === 'object' && 'message' in error ? (error as any).message : 'Authentication failed');
       } else {
-        setEmail('');
-        setPassword('');
-        setError('');
-        onSuccess?.();
+        if (mode === 'signup') {
+          setSuccess('Account created successfully! Please check your email to verify your account before signing in.');
+          setEmail('');
+          setPassword('');
+        } else {
+          setEmail('');
+          setPassword('');
+          setError('');
+          onSuccess?.();
+        }
       }
     } catch (err) {
       setError('An unexpected error occurred');
@@ -94,13 +103,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onModeChange, onSucces
           </div>
 
           {error && (
-            <div className="text-sm p-3 rounded-md border" style={{
-              backgroundColor: 'var(--bg-tertiary)',
-              color: 'var(--error-red)',
-              borderColor: 'var(--error-red)'
-            }}>
-              {error}
-            </div>
+            <AlertMessage
+              type="error"
+              message={error}
+              className="mb-4"
+            />
+          )}
+
+          {success && (
+            <AlertMessage
+              type="success"
+              title="Account Created!"
+              message={success}
+              className="mb-4"
+            />
           )}
 
           <Button
@@ -110,10 +126,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onModeChange, onSucces
             className="w-full"
             disabled={loading}
           >
-            {loading
-              ? (mode === 'login' ? 'Signing In...' : 'Creating Account...')
-              : (mode === 'login' ? 'Sign In' : 'Create Account')
-            }
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                {mode === 'login' ? 'Signing In...' : 'Creating Account...'}
+              </div>
+            ) : (
+              mode === 'login' ? 'Sign In' : 'Sign Up'
+            )}
           </Button>
         </form>
 
