@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Terminal Mastery
+
+An interactive web-based platform for learning Linux terminal commands and command-line fundamentals. Built with Next.js, TypeScript, and Supabase.
+
+## Features
+
+- **20 Interactive Lessons**: Comprehensive curriculum covering essential Linux terminal commands
+- **Progress Tracking**: User authentication with Supabase to track learning progress
+- **Interactive Terminal Simulator**: Practice commands in a safe, simulated environment
+- **PDF Certificate Generation**: Downloadable completion certificates
+- **Command Cheat Sheet**: PDF export of all learned commands
+- **Responsive Design**: Modern UI with dark theme and smooth animations
+- **Real-time Feedback**: Instant validation of terminal commands
+
+## Tech Stack
+
+- **Frontend**: Next.js 15.5.2, React 19, TypeScript
+- **Styling**: Tailwind CSS 4, Framer Motion for animations
+- **Backend**: Supabase (Authentication, Database, Real-time)
+- **PDF Generation**: jsPDF for certificates and cheat sheets
+- **Code Highlighting**: React Syntax Highlighter with Prism
+- **Markdown**: React Markdown with GitHub Flavored Markdown support
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+
+- npm, yarn, pnpm, or bun
+- Supabase account (for user authentication and progress tracking)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone [repository-url]
+cd terminal-mastery
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+Create a `.env.local` file in the root directory:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/                 # Next.js App Router pages
+├── components/          # Reusable UI components
+│   ├── ui/             # Basic UI components
+│   └── lessons/        # Lesson-specific components
+├── context/            # React Context providers
+├── data/               # Static lesson data
+├── lib/                # Utilities and configurations
+├── types/              # TypeScript type definitions
+└── utils/              # Helper functions
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Key Features
 
-## Deploy on Vercel
+### Lesson System
+- 20 structured lessons covering basic to advanced terminal commands
+- Interactive command practice with real-time validation
+- Progress tracking with completion status
+- Estimated time and difficulty levels
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### User Authentication
+- Supabase-powered authentication (email/password, OAuth)
+- Progress synchronization across devices
+- Guest mode for anonymous learning
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### PDF Generation
+- Completion certificates with user names and dates
+- Command cheat sheets with all learned commands
+- Professional styling and branding
+
+### Interactive Terminal
+- Simulated terminal environment
+- Command validation and feedback
+- Safety features preventing harmful commands
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+## Deployment
+
+The application is configured for deployment on Netlify with the following build settings:
+
+- **Build Command**: `npm run build`
+- **Publish Directory**: `out` (for static export)
+- **Environment Variables**: Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## License
+
+This project is private and proprietary.
