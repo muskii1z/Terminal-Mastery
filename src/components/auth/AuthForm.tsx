@@ -71,7 +71,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onModeChange, onSucces
       const { error } = await resetPassword(email);
 
       if (error) {
-        setError(error && typeof error === 'object' && 'message' in error ? (error as any).message : 'Failed to send reset email');
+        setError(error && typeof error === 'object' && 'message' in error ? (error as { message: string }).message : 'Failed to send reset email');
       } else {
         setSuccess('Password reset email sent! Check your inbox and follow the instructions to reset your password.');
         setShowForgotPassword(false);

@@ -63,7 +63,7 @@ export default function LessonsPage() {
 
   // Filtered and sorted lessons
   const filteredLessons = useMemo(() => {
-    let filtered = lessons.filter(lesson => {
+    const filtered = lessons.filter(lesson => {
       // Search filter
       const matchesSearch = searchQuery === '' ||
         lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -268,7 +268,7 @@ export default function LessonsPage() {
                     ].map(({ key, label, count }) => (
                       <button
                         key={key}
-                        onClick={() => setSelectedFilter(key as any)}
+                        onClick={() => setSelectedFilter(key as 'all' | 'not-started' | 'in-progress' | 'completed')}
                         aria-pressed={selectedFilter === key}
                         aria-label={`Filter by ${label} lessons (${count} lessons)`}
                         className={`
@@ -295,7 +295,7 @@ export default function LessonsPage() {
                   <select
                     id="sort-select"
                     value={selectedSort}
-                    onChange={(e) => setSelectedSort(e.target.value as any)}
+                    onChange={(e) => setSelectedSort(e.target.value as 'lesson-order' | 'status' | 'duration')}
                     aria-label="Sort lessons by"
                     className="flex-1 sm:flex-none theme-bg-tertiary border theme-border-primary rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
                   >

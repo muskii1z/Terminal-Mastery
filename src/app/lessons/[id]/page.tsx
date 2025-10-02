@@ -534,7 +534,7 @@ export default function LessonPage() {
           <div className="theme-bg-tertiary border theme-border-primary rounded-lg p-5 mb-6 max-w-2xl mx-auto">
             <h3 className="text-lg font-semibold mb-4">What you learned:</h3>
             <div className="text-left">
-              {parseSummaryText(lesson.content.summary)}
+              {parseSummaryText(lesson.content.summary || 'Great job completing this lesson!')}
             </div>
           </div>
 

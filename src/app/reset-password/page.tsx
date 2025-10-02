@@ -58,7 +58,7 @@ export default function ResetPasswordPage() {
       const { error } = await updatePassword(password);
 
       if (error) {
-        setError(error && typeof error === 'object' && 'message' in error ? (error as any).message : 'Failed to update password');
+        setError(error && typeof error === 'object' && 'message' in error ? (error as { message: string }).message : 'Failed to update password');
       } else {
         setSuccess('Password updated successfully! You can now sign in with your new password.');
         setTimeout(() => {

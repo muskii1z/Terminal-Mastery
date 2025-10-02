@@ -3,7 +3,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import CopyButton from './CopyButton';
 
@@ -48,18 +47,18 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content, className = 
               {children}
             </em>
           ),
-          code: ({ node, inline, className, children, ...props }) => {
+          code: ({ className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');
             const codeContent = String(children).replace(/\n$/, '');
+            const { ref, key, style, ...validProps } = props;
 
-            if (!inline && match) {
+            if (match) {
               return (
                 <div className="relative group my-4">
                   <div className="absolute top-2 right-2 z-10">
                     <CopyButton text={codeContent} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <SyntaxHighlighter
-                    style={oneDark}
                     language={match[1]}
                     PreTag="div"
                     customStyle={{
@@ -67,8 +66,10 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({ content, className = 
                       borderRadius: '8px',
                       fontSize: '14px',
                       padding: '16px',
+                      background: '#1e1e1e',
+                      color: '#d4d4d4',
                     }}
-                    {...props}
+                    {...validProps}
                   >
                     {codeContent}
                   </SyntaxHighlighter>
