@@ -23,7 +23,7 @@ const Button: React.FC<ButtonProps> = ({
   const variantClasses = {
     primary: 'clean-button-primary',
     secondary: 'clean-button-secondary',
-    ghost: 'bg-transparent text-text-primary hover:bg-bg-secondary',
+    ghost: 'clean-button-ghost',
     danger: 'text-white' // Use style attribute for CSS custom properties
   };
 

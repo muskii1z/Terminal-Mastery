@@ -17,18 +17,18 @@ const CTABand: React.FC = () => {
 
       <div className="relative max-w-5xl mx-auto text-center">
         <h2 className="text-4xl md:text-6xl font-bold text-text-primary mb-6 leading-tight">
-          Start in{' '}
+          Master the terminal in{' '}
           <span className="bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
-            60 seconds
+            2 hours
           </span>
           <br />
           <span className="text-2xl md:text-3xl font-normal text-text-secondary">
-            no experience required
+            perfect for beginners
           </span>
         </h2>
 
         <p className="text-xl text-text-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
-          Join thousands who&apos;ve mastered the terminal with our beginner-friendly approach
+          Join thousands who&apos;ve gone from terminal-phobic to confident developers in just one afternoon
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8">

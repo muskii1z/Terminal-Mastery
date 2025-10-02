@@ -93,16 +93,6 @@ const CurriculumPreview: React.FC = () => {
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <Link href="/lessons" className="inline-block" scroll={false}>
-            <button className="clean-button clean-button-secondary">
-              View All Lessons
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </Link>
-        </div>
       </div>
     </section>
   );

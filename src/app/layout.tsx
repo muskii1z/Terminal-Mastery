@@ -25,6 +25,17 @@ export const metadata: Metadata = {
   creator: "Terminal Mastery",
   publisher: "Terminal Mastery",
   category: "Education",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.svg', sizes: '32x32', type: 'image/svg+xml' },
+      { url: '/favicon.svg', sizes: '16x16', type: 'image/svg+xml' }
+    ],
+    apple: [
+      { url: '/favicon.svg', sizes: '180x180', type: 'image/svg+xml' }
+    ],
+    shortcut: '/favicon.svg'
+  },
   openGraph: {
     title: "Master the Terminal in under 2 Hours",
     description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
@@ -71,8 +82,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#2188ff" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-bg-primary text-text-primary`}
+        suppressHydrationWarning={true}
       >
         <ThemeProvider>
           <AuthProvider>

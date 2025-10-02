@@ -28,30 +28,24 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="border-b fixed top-0 left-0 right-0 z-50 px-6 py-4" style={{
+    <header className="border-b fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4" style={{
       borderColor: 'var(--border-primary)',
       backgroundColor: 'var(--bg-secondary)'
     }}>
       <div className="max-w-6xl mx-auto flex items-center justify-between h-16">
         {/* Logo */}
         <Link href="/" className="no-underline" scroll={false}>
-          <div className="flex items-center gap-2 cursor-pointer transition-colors" style={{
-            color: 'var(--text-primary)'
-          }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-blue)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}>
-            <div className="w-8 h-8 rounded flex items-center justify-center font-mono font-bold" style={{
-              backgroundColor: 'var(--accent-blue)',
-              color: 'white'
-            }}>
-              T
-            </div>
-            <span className="text-xl font-semibold">
-              Terminal Mastery
-            </span>
+          <div className="flex items-center gap-3 cursor-pointer transition-opacity hover:opacity-80">
+            <img
+              src="/logo.svg"
+              alt="Terminal Mastery Logo"
+              className="h-10 w-auto"
+            />
           </div>
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-2 sm:gap-4">
           <Link href="/" className="no-underline" scroll={false}>
             <button className="nav-link">
               Home
@@ -64,7 +58,7 @@ const Header: React.FC = () => {
           {user ? (
             <>
               <Link href="/lessons" className="no-underline" scroll={false}>
-                <button className="nav-link">
+                <button className="nav-link font-medium">
                   Lessons
                 </button>
               </Link>

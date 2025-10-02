@@ -12,24 +12,28 @@ const FAQ: React.FC = () => {
 
   const faqItems: FAQItem[] = [
     {
-      question: "Do I need Linux?",
-      answer: "macOS, Linux, or Windows (WSL) all work."
+      question: "Do I need a specific operating system?",
+      answer: "Not at all! Terminal Mastery works on macOS, Linux, and Windows (with WSL). We'll show you how to access your terminal regardless of which system you're using. The commands and concepts are universal."
     },
     {
-      question: "How long does it take?",
-      answer: "~1 hour total."
+      question: "How long does it take to complete?",
+      answer: "You can master the terminal basics in just 2 hours. Our bite-sized lessons are designed for busy schedules — learn at your own pace, whether that's 15 minutes a day or completing everything in one weekend session."
     },
     {
-      question: "Is it free?",
-      answer: "Yes — create a free account to save progress."
+      question: "Is Terminal Mastery really free?",
+      answer: "Absolutely! All core lessons are completely free forever. Create a free account to track your progress, save your place, and access interactive exercises. No credit card required, no hidden fees."
     },
     {
-      question: "Will this help me code?",
-      answer: "Yes. The terminal is a core dev skill."
+      question: "Will this actually help me become a better developer?",
+      answer: "Yes! The terminal is essential for modern development. You'll learn to navigate files faster than any GUI, use Git effectively, run development servers, manage dependencies, and deploy code. These skills are used daily by professional developers."
     },
     {
-      question: "What if I'm a total beginner?",
-      answer: "That's who it's for."
+      question: "I've never touched a terminal before. Is this really for me?",
+      answer: "Perfect! Terminal Mastery is specifically designed for complete beginners. We start with the absolute basics — like opening your terminal — and build up your confidence step by step. No prior experience needed."
+    },
+    {
+      question: "What makes this different from other terminal tutorials?",
+      answer: "We focus on practical skills you'll actually use as a developer, not academic theory. Our interactive exercises let you practice real commands safely, with instant feedback. Plus, everything is designed to be completed in just 2 hours."
     }
   ];
 

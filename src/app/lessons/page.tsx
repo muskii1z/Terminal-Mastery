@@ -141,7 +141,7 @@ export default function LessonsPage() {
   if (!initialized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-text-secondary">Loading...</div>
+        <div className="theme-text-secondary">Loading...</div>
       </div>
     );
   }
@@ -150,7 +150,7 @@ export default function LessonsPage() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-text-secondary">Redirecting to login...</div>
+        <div className="theme-text-secondary">Redirecting to login...</div>
       </div>
     );
   }
@@ -162,17 +162,17 @@ export default function LessonsPage() {
         <div className="max-w-6xl mx-auto">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-text-primary mb-4">
+            <h1 className="text-4xl font-bold theme-text-primary mb-4">
               Terminal Mastery Lessons
             </h1>
-            <p className="text-text-secondary text-lg mb-6 max-w-2xl mx-auto">
+            <p className="theme-text-secondary text-lg mb-6 max-w-2xl mx-auto">
               Learn Linux commands step by step. Each lesson takes about 6 minutes and includes hands-on practice.
             </p>
             
             {/* Progress Overview */}
             <div className="max-w-md mx-auto mb-8">
               <div className="clean-card p-6">
-                <h3 className="text-lg font-semibold text-text-primary mb-3">
+                <h3 className="text-lg font-semibold theme-text-primary mb-3">
                   Your Progress
                 </h3>
                 <div className="progress-bar h-3 mb-2">
@@ -181,7 +181,7 @@ export default function LessonsPage() {
                     style={{ width: `${progressPercentage}%` }}
                   />
                 </div>
-                <p className="text-text-secondary text-sm mb-4">
+                <p className="theme-text-secondary text-sm mb-4">
                   {completedLessons} of {totalLessons} lessons completed ({progressPercentage}%)
                 </p>
 
@@ -200,14 +200,24 @@ export default function LessonsPage() {
                 {completedLessons === totalLessons && (
                   <div className="text-center">
                     <div className="text-accent-green font-semibold mb-2">🎉 All lessons completed!</div>
-                    <Button
-                      onClick={() => router.push('/lessons/1')}
-                      variant="secondary"
-                      size="sm"
-                      className="w-full"
-                    >
-                      Review Lessons
-                    </Button>
+                    <div className="space-y-2">
+                      <Button
+                        onClick={() => router.push('/completion')}
+                        variant="primary"
+                        size="sm"
+                        className="w-full"
+                      >
+                        View Your Achievement
+                      </Button>
+                      <Button
+                        onClick={() => router.push('/lessons/1')}
+                        variant="secondary"
+                        size="sm"
+                        className="w-full"
+                      >
+                        Review Lessons
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -229,16 +239,16 @@ export default function LessonsPage() {
                     placeholder="Search lessons..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-20 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full pl-10 pr-20 py-3 theme-bg-tertiary border theme-border-primary rounded-lg theme-text-primary placeholder:theme-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     aria-label="Search lessons by title or description"
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <span className="hidden sm:inline-flex text-xs text-gray-500 bg-gray-700 px-2 py-1 rounded border border-gray-600">
+                    <span className="hidden sm:inline-flex text-xs theme-text-muted theme-bg-tertiary px-2 py-1 rounded border theme-border-primary">
                       ⌘K
                     </span>
                   </div>
@@ -265,7 +275,7 @@ export default function LessonsPage() {
                           px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 touch-manipulation focus:outline-none focus:ring-2 focus:ring-blue-500
                           ${selectedFilter === key
                             ? 'bg-blue-600 text-white shadow-md'
-                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700 active:bg-gray-600'
+                            : 'theme-bg-tertiary theme-text-secondary hover:theme-bg-tertiary active:theme-bg-tertiary'
                           }
                         `}
                       >
@@ -279,7 +289,7 @@ export default function LessonsPage() {
 
                 {/* Sort Controls */}
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <label htmlFor="sort-select" className="text-sm text-gray-400 whitespace-nowrap">
+                  <label htmlFor="sort-select" className="text-sm theme-text-muted whitespace-nowrap">
                     Sort by:
                   </label>
                   <select
@@ -287,7 +297,7 @@ export default function LessonsPage() {
                     value={selectedSort}
                     onChange={(e) => setSelectedSort(e.target.value as any)}
                     aria-label="Sort lessons by"
-                    className="flex-1 sm:flex-none bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
+                    className="flex-1 sm:flex-none theme-bg-tertiary border theme-border-primary rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
                   >
                     <option value="lesson-order">Lesson Order</option>
                     <option value="status">Status</option>
@@ -298,12 +308,12 @@ export default function LessonsPage() {
 
               {/* Results Summary */}
               {(searchQuery || selectedFilter !== 'all') && (
-                <div className="mt-4 p-3 bg-gray-800 rounded-lg">
-                  <p className="text-sm text-gray-300">
+                <div className="mt-4 p-3 theme-bg-tertiary rounded-lg">
+                  <p className="text-sm theme-text-secondary">
                     Showing {filteredLessons.length} of {lessons.length} lessons
                     {searchQuery && (
                       <span className="ml-1">
-                        matching "<span className="text-blue-400">{searchQuery}</span>"
+                        matching &quot;<span className="text-blue-400">{searchQuery}</span>&quot;
                       </span>
                     )}
                   </p>
@@ -331,7 +341,7 @@ export default function LessonsPage() {
                     <CardHeader>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-mono text-text-muted">
+                          <span className="text-sm font-mono theme-text-muted">
                             Lesson {lesson.id}
                           </span>
                           {/* Enhanced Status Badge */}
@@ -339,7 +349,7 @@ export default function LessonsPage() {
                             px-2 py-1 rounded-full text-xs font-medium
                             ${isCompleted ? 'bg-green-500 text-white' : ''}
                             ${isInProgress ? 'bg-blue-500 text-white' : ''}
-                            ${isNotStarted ? 'bg-gray-600 text-gray-300' : ''}
+                            ${isNotStarted ? 'theme-bg-tertiary theme-text-secondary' : ''}
                           `}>
                             {isCompleted ? 'Done' : isInProgress ? 'Current' : 'New'}
                           </div>
@@ -360,23 +370,23 @@ export default function LessonsPage() {
                               </svg>
                             </div>
                           )}
-                          <span className="text-sm text-text-muted">
+                          <span className="text-sm theme-text-muted">
                             {lesson.duration}m
                           </span>
                         </div>
                       </div>
-                      <CardTitle className={isLocked ? 'text-text-muted' : ''}>
+                      <CardTitle className={isLocked ? 'theme-text-muted' : ''}>
                         {lesson.title}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className={`text-sm mb-4 ${isLocked ? 'text-text-muted' : 'text-text-secondary'}`}>
+                      <p className={`text-sm mb-4 ${isLocked ? 'theme-text-muted' : 'theme-text-secondary'}`}>
                         {lesson.description}
                       </p>
 
                       <div className="flex items-center justify-between">
                         {isLocked ? (
-                          <div className="text-sm text-text-muted">
+                          <div className="text-sm theme-text-muted">
                             Complete previous lesson to unlock
                           </div>
                         ) : (
@@ -402,13 +412,13 @@ export default function LessonsPage() {
               /* Empty State */
               <div className="col-span-full">
                 <div className="text-center py-16">
-                  <div className="mx-auto w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-6">
-                    <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="mx-auto w-24 h-24 theme-bg-tertiary rounded-full flex items-center justify-center mb-6">
+                    <svg className="w-12 h-12 theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-300 mb-2">No lessons found</h3>
-                  <p className="text-gray-500 mb-6">
+                  <h3 className="text-xl font-semibold theme-text-secondary mb-2">No lessons found</h3>
+                  <p className="theme-text-muted mb-6">
                     {searchQuery
                       ? `No lessons match "${searchQuery}". Try adjusting your search terms.`
                       : 'No lessons match the selected filters. Try changing your filter selection.'
@@ -440,10 +450,10 @@ export default function LessonsPage() {
           {/* Call to Action */}
           <div className="text-center mt-16">
             <div className="clean-card p-8 max-w-2xl mx-auto">
-              <h2 className="text-2xl font-bold text-text-primary mb-4">
+              <h2 className="text-2xl font-bold theme-text-primary mb-4">
                 Ready to Master the Terminal?
               </h2>
-              <p className="text-text-secondary mb-6">
+              <p className="theme-text-secondary mb-6">
                 Start with the basics and work your way up to advanced commands. 
                 Each lesson builds on the previous one.
               </p>

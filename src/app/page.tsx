@@ -105,38 +105,18 @@ export default function Home() {
         <CTABand />
 
         {/* Footer */}
-        <footer className="border-t border-border-primary py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-4">Terminal Mastery</h3>
-                <p className="text-text-secondary text-sm">
-                  Master the command line with interactive lessons designed for developers of all levels.
-                </p>
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-text-primary mb-4">Learn</h4>
-                <ul className="space-y-2 text-sm text-text-secondary">
-                  <li><Link href="/lessons" className="hover:text-text-primary transition-colors">Lessons</Link></li>
-                  <li><Link href="/lessons" className="hover:text-text-primary transition-colors">Practice</Link></li>
-                  <li><Link href="/lessons" className="hover:text-text-primary transition-colors">Quizzes</Link></li>
-                  <li><Link href="/lessons" className="hover:text-text-primary transition-colors">Challenges</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-text-primary mb-4">Support</h4>
-                <ul className="space-y-2 text-sm text-text-secondary">
-                  <li><a href="#" className="hover:text-text-primary transition-colors">Documentation</a></li>
-                  <li><a href="#" className="hover:text-text-primary transition-colors">Community</a></li>
-                  <li><a href="#" className="hover:text-text-primary transition-colors">Help Center</a></li>
-                  <li><a href="#" className="hover:text-text-primary transition-colors">Contact</a></li>
-                </ul>
-              </div>
-            </div>
-            <div className="mt-8 pt-8 border-t border-border-primary text-center">
-              <p className="text-text-muted text-sm">
-                © 2024 Terminal Mastery. Built for developers who want to master the command line.
-              </p>
+        <footer className="border-t border-border-primary py-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-text-muted text-sm mb-4">
+              © 2025 Terminal Mastery. Built for developers who want to master the command line.
+            </p>
+            <div className="flex justify-center space-x-6 text-sm">
+              <Link href="/privacy" className="text-text-secondary hover:text-text-primary transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-text-secondary hover:text-text-primary transition-colors">
+                Terms of Service
+              </Link>
             </div>
           </div>
         </footer>

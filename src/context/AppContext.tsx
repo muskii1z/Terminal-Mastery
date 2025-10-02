@@ -4,7 +4,7 @@ import React, { createContext, useContext, useReducer, useEffect, ReactNode } fr
 import { UserProgress, Lesson } from '@/types';
 import { saveToLocalStorage, loadFromLocalStorage, STORAGE_KEYS } from '@/utils';
 import { useAuth } from './AuthContext';
-import { getProgressForUser, markLessonComplete as markLessonCompleteAPI, resetProgressForUser } from '@/lib/supabase/progress';
+import { getProgressForUser, markLessonComplete as markLessonCompleteAPI, resetProgressForUser, LessonProgress } from '@/lib/supabase/progress';
 
 interface AppState {
   userProgress: UserProgress;
@@ -162,7 +162,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         try {
           // Load user progress from Supabase
           const progress = await getProgressForUser(user.id);
-          dispatch({ type: 'LOAD_PROGRESS', payload: progress });
+          // Convert LessonProgress to UserProgress format
+          const userProgress: UserProgress = {
+            userId: progress.userId,
+            lessonsCompleted: progress.lessonsCompleted,
+            currentLesson: progress.currentLesson,
+            quizScores: {},
+            totalProgress: progress.totalProgress,
+            totalLessons: progress.totalLessons,
+            completedCount: progress.completedCount,
+          };
+          dispatch({ type: 'LOAD_PROGRESS', payload: userProgress });
         } catch (error) {
           console.error('Error loading user progress:', error);
           // Fallback to localStorage for this session
@@ -194,7 +204,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         if (success) {
           // Reload progress to get updated data
           const progress = await getProgressForUser(user.id);
-          dispatch({ type: 'LOAD_PROGRESS', payload: progress });
+          const userProgress: UserProgress = {
+            userId: progress.userId,
+            lessonsCompleted: progress.lessonsCompleted,
+            currentLesson: progress.currentLesson,
+            quizScores: {},
+            totalProgress: progress.totalProgress,
+            totalLessons: progress.totalLessons,
+            completedCount: progress.completedCount,
+          };
+          dispatch({ type: 'LOAD_PROGRESS', payload: userProgress });
         } else {
           console.error('Failed to mark lesson complete in database');
           // Fallback to local state update
@@ -228,7 +247,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         if (success) {
           // Reload progress to get updated data
           const progress = await getProgressForUser(user.id);
-          dispatch({ type: 'LOAD_PROGRESS', payload: progress });
+          const userProgress: UserProgress = {
+            userId: progress.userId,
+            lessonsCompleted: progress.lessonsCompleted,
+            currentLesson: progress.currentLesson,
+            quizScores: {},
+            totalProgress: progress.totalProgress,
+            totalLessons: progress.totalLessons,
+            completedCount: progress.completedCount,
+          };
+          dispatch({ type: 'LOAD_PROGRESS', payload: userProgress });
         } else {
           console.error('Failed to reset progress in database');
           dispatch({ type: 'RESET_PROGRESS' });

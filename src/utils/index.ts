@@ -8,7 +8,7 @@ export const STORAGE_KEYS = {
   SETTINGS: 'terminal-mastery-settings',
 } as const;
 
-export const saveToLocalStorage = (key: string, data: any): void => {
+export const saveToLocalStorage = (key: string, data: unknown): void => {
   try {
     localStorage.setItem(key, JSON.stringify(data));
   } catch (error) {
@@ -114,7 +114,7 @@ export const formatDuration = (minutes: number): string => {
 };
 
 // Debounce utility for search and input handling
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): ((...args: Parameters<T>) => void) => {

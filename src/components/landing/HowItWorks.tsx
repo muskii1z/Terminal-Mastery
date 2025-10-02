@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 
 const HowItWorks: React.FC = () => {
   const steps = [
@@ -48,24 +49,19 @@ const HowItWorks: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
           {steps.map((step, index) => (
-            <div key={step.number} className="text-center relative">
+            <div key={step.number} className="text-center">
               {/* Step Number */}
-              <div className="w-16 h-16 bg-accent-blue rounded-full flex items-center justify-center text-white text-xl font-bold mx-auto mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-accent-blue to-accent-blue/80 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6 shadow-lg">
                 {step.number}
               </div>
 
-              {/* Connector Line (hidden on mobile, shown between steps on desktop) */}
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-8 left-1/2 w-full h-0.5 bg-border-primary transform translate-x-1/2 z-0"></div>
-              )}
-
-              <div className="relative z-10">
-                <h3 className="text-xl font-semibold text-text-primary mb-2">
+              <div>
+                <h3 className="text-xl font-bold text-text-primary mb-3">
                   {step.title}
                 </h3>
-                <p className="text-text-secondary">
+                <p className="text-text-secondary text-lg">
                   {step.description}
                 </p>
               </div>
@@ -80,9 +76,9 @@ const HowItWorks: React.FC = () => {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {/* Lesson Interface Screenshot */}
-            <div className="group">
+            <SpotlightCard className="p-4" spotlightColor="rgba(34, 197, 94, 0.12)">
               <div
-                className="rounded-lg border overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105"
+                className="rounded-lg border overflow-hidden shadow-lg transition-all duration-300"
                 style={{
                   backgroundColor: 'var(--bg-tertiary)',
                   borderColor: 'var(--border-primary)'
@@ -109,11 +105,11 @@ const HowItWorks: React.FC = () => {
                 </div>
               </div>
               <p className="text-center text-sm text-text-muted mt-3">Interactive Lessons</p>
-            </div>
+            </SpotlightCard>
 
             {/* Quiz Interface Screenshot */}
-            <div className="group">
-              <div className="bg-bg-primary rounded-lg border border-border-primary overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+            <SpotlightCard className="p-4" spotlightColor="rgba(59, 130, 246, 0.15)">
+              <div className="bg-bg-primary rounded-lg border border-border-primary overflow-hidden shadow-lg transition-all duration-300">
                 <div className="p-4">
                   <div className="text-sm text-text-primary mb-3 font-semibold">Quick Quiz</div>
                   <div className="text-xs text-text-secondary mb-3">Which command shows your current directory?</div>
@@ -130,11 +126,11 @@ const HowItWorks: React.FC = () => {
                 </div>
               </div>
               <p className="text-center text-sm text-text-muted mt-3">Knowledge Quizzes</p>
-            </div>
+            </SpotlightCard>
 
             {/* Progress Tracking Screenshot */}
-            <div className="group">
-              <div className="bg-bg-primary rounded-lg border border-border-primary overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+            <SpotlightCard className="p-4" spotlightColor="rgba(147, 51, 234, 0.12)">
+              <div className="bg-bg-primary rounded-lg border border-border-primary overflow-hidden shadow-lg transition-all duration-300">
                 <div className="p-4">
                   <div className="text-sm text-text-primary mb-3 font-semibold">Your Progress</div>
                   <div className="space-y-2">
@@ -158,7 +154,7 @@ const HowItWorks: React.FC = () => {
                 </div>
               </div>
               <p className="text-center text-sm text-text-muted mt-3">Progress Tracking</p>
-            </div>
+            </SpotlightCard>
           </div>
         </div>
       </div>

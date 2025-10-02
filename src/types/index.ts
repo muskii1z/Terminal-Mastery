@@ -14,7 +14,8 @@ export interface LessonContent {
   introduction: string;
   commands: Command[];
   practice: PracticeExercise[];
-  summary: string;
+  summary?: string;
+  bridgeToNext?: string;
 }
 
 export interface Command {
@@ -35,12 +36,14 @@ export interface PracticeExercise {
   prompt: string;
   expectedCommand: string;
   hints?: string[];
-  completed: boolean;
+  completed?: boolean;
+  explanation?: string;
 }
 
 export interface Quiz {
   id: string;
   questions: QuizQuestion[];
+  bridgeToNext?: string;
 }
 
 export interface QuizQuestion {

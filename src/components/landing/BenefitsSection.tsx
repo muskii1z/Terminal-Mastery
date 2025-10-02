@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 
 const BenefitsSection: React.FC = () => {
   const benefits = [
@@ -39,16 +39,20 @@ const BenefitsSection: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6">
-            Why developers choose Terminal Mastery
+            Master the terminal in 2 hours
           </h2>
           <p className="text-xl text-text-secondary max-w-3xl mx-auto">
-            We&apos;ve designed every lesson to help you learn faster and remember longer
+            Perfect for beginners — we&apos;ve designed every lesson to help you learn faster and remember longer
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {benefits.map((benefit) => (
-            <div key={benefit.title} className="group text-center">
+          {benefits.map((benefit, index) => (
+            <SpotlightCard
+              key={benefit.title}
+              className="text-center h-full"
+              spotlightColor={index === 1 ? 'rgba(147, 51, 234, 0.12)' : 'rgba(59, 130, 246, 0.15)'}
+            >
               <div className="relative">
                 <div className="w-20 h-20 bg-gradient-to-br from-accent-blue to-accent-purple rounded-2xl flex items-center justify-center text-white mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   {benefit.icon}
@@ -60,7 +64,7 @@ const BenefitsSection: React.FC = () => {
               <p className="text-lg text-text-secondary leading-relaxed">
                 {benefit.description}
               </p>
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </div>
