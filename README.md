@@ -33,8 +33,8 @@ An interactive web-based platform for learning Linux terminal commands and comma
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
-cd terminal-mastery
+git clone https://github.com/muskii1z/Terminal-Mastery.git
+cd Terminal-Mastery
 ```
 
 2. Install dependencies:
