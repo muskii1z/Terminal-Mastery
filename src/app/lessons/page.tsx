@@ -12,7 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 import { getNextIncompleteLesson } from '@/lib/supabase/progress';
 
 export default function LessonsPage() {
-  const { user, initialized } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const { userProgress } = useAppContext();
   const totalLessons = getTotalLessons();
@@ -34,32 +34,23 @@ export default function LessonsPage() {
     return 'not-started';
   };
 
-  // Resume functionality
+  // Resume functionality. Works signed out: falls back to local progress.
   const handleResume = async () => {
-    if (!user) return;
-
-    try {
-      const nextLessonId = await getNextIncompleteLesson(user.id);
-      if (nextLessonId) {
-        router.push(`/lessons/${nextLessonId}`);
-      } else {
-        // All lessons completed, go to first lesson for review
-        router.push('/lessons/1');
+    if (user) {
+      try {
+        const nextLessonId = await getNextIncompleteLesson(user.id);
+        router.push(`/lessons/${nextLessonId || '1'}`);
+        return;
+      } catch (error) {
+        console.error('Error finding next lesson:', error);
       }
-    } catch (error) {
-      console.error('Error finding next lesson:', error);
-      // Fallback to current lesson or first lesson
-      const fallbackLessonId = userProgress.currentLesson || '1';
-      router.push(`/lessons/${fallbackLessonId}`);
     }
-  };
 
-  // Client-side protection - redirect if not authenticated
-  useEffect(() => {
-    if (initialized && !user) {
-      router.push('/login');
-    }
-  }, [user, initialized, router]);
+    const nextLocal = lessons.find(
+      lesson => !userProgress.lessonsCompleted.includes(lesson.id)
+    );
+    router.push(`/lessons/${nextLocal?.id || userProgress.currentLesson || '1'}`);
+  };
 
   // Filtered and sorted lessons
   const filteredLessons = useMemo(() => {
@@ -136,24 +127,6 @@ export default function LessonsPage() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [searchQuery]);
-
-  // Show loading while checking authentication
-  if (!initialized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="theme-text-secondary">Loading...</div>
-      </div>
-    );
-  }
-
-  // Show loading while redirecting unauthenticated users
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="theme-text-secondary">Redirecting to login...</div>
-      </div>
-    );
-  }
 
   return (
     <>

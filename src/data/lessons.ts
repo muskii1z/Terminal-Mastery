@@ -1602,7 +1602,55 @@ export const lessons: Lesson[] = [
           explanation: 'Ctrl+X exits nano, cat displays file contents'
         }
       ],
+      summary: `
+        You can now create and edit files without leaving the terminal. Nano keeps its shortcuts on screen at all times, so there is nothing to memorise — and the ^ symbol always means the Ctrl key.
+
+        Key takeaways: • nano filename opens a file for editing, creating it if it does not exist yet • Ctrl+O saves the file (think "Output"), then Enter confirms the filename • Ctrl+X exits, and offers to save first if you have unsaved changes • Ctrl+K cuts a whole line, Ctrl+U pastes it back • Ctrl+W searches inside the file • Ctrl+G opens the built-in help
+
+        Nano is deliberately simple, and that is its strength. Many developers eventually move on to vim or emacs, but nano is installed almost everywhere and stays the fastest way to make a quick edit on a remote server.
+      `,
       bridgeToNext: `Now that you can edit files directly from the terminal, let's learn how to process text data with commands like sort, uniq, and wc.`
+    },
+    quiz: {
+      id: 'quiz-8',
+      questions: [
+        {
+          id: 'q8-1',
+          question: 'Nano shows "^X Exit" at the bottom of the screen. What does the ^ symbol mean?',
+          options: [
+            'Press Shift',
+            'Press the Ctrl key',
+            'Press the Alt key',
+            'Press the up arrow'
+          ],
+          correctAnswer: 1,
+          explanation: 'In nano, ^ always stands for the Ctrl key — so ^X means Ctrl+X.'
+        },
+        {
+          id: 'q8-2',
+          question: 'You want to save your changes but keep editing. Which shortcut do you use?',
+          options: [
+            'Ctrl+X',
+            'Ctrl+O',
+            'Ctrl+S',
+            'Ctrl+W'
+          ],
+          correctAnswer: 1,
+          explanation: 'Ctrl+O writes the file out (saves) and leaves you in the editor. Ctrl+X would exit, and nano does not use Ctrl+S to save.'
+        },
+        {
+          id: 'q8-3',
+          question: 'You pressed Ctrl+K three times by accident and deleted three lines. How do you get them back?',
+          options: [
+            'Ctrl+Z to undo',
+            'Ctrl+U to paste them back',
+            'Ctrl+R to reload the file',
+            'Retype them — cut lines are gone for good'
+          ],
+          correctAnswer: 1,
+          explanation: 'Ctrl+K cuts lines into a buffer and Ctrl+U uncuts (pastes) them back. They are a pair.'
+        }
+      ]
     }
   },
 

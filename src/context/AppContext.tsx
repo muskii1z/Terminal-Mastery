@@ -5,6 +5,7 @@ import { UserProgress, Lesson } from '@/types';
 import { saveToLocalStorage, loadFromLocalStorage, STORAGE_KEYS } from '@/utils';
 import { useAuth } from './AuthContext';
 import { getProgressForUser, markLessonComplete as markLessonCompleteAPI, resetProgressForUser, LessonProgress } from '@/lib/supabase/progress';
+import { lessons as allLessons } from '@/data/lessons';
 
 interface AppState {
   userProgress: UserProgress;
@@ -29,7 +30,7 @@ const initialState: AppState = {
     quizScores: {},
     totalProgress: 0,
   },
-  lessons: [], // Will be populated with actual lesson data
+  lessons: allLessons,
   currentLesson: null,
   isLoading: true,
 };
@@ -55,7 +56,9 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       const newProgress = {
         ...state.userProgress,
         lessonsCompleted: updatedLessonsCompleted,
-        totalProgress: Math.round((updatedLessonsCompleted.length / state.lessons.length) * 100),
+        totalProgress: state.lessons.length
+          ? Math.round((updatedLessonsCompleted.length / state.lessons.length) * 100)
+          : 0,
       };
 
       // Save to user-specific key if authenticated

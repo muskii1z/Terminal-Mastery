@@ -108,7 +108,7 @@ export default function Home() {
         <footer className="border-t border-border-primary py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <p className="text-text-muted text-sm mb-4">
-              © 2025 Terminal Mastery. Built for developers who want to master the command line.
+              © {new Date().getFullYear()} Terminal Mastery. Built for developers who want to master the command line.
             </p>
             <div className="flex justify-center space-x-6 text-sm">
               <Link href="/privacy" className="text-text-secondary hover:text-text-primary transition-colors">

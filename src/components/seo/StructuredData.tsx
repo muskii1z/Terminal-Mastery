@@ -11,7 +11,7 @@ const StructuredData: React.FC = () => {
     "provider": {
       "@type": "Organization",
       "name": "Terminal Mastery",
-      "url": "https://terminal-mastery.com"
+      "url": process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
     },
     "hasCourseInstance": {
       "@type": "CourseInstance",
@@ -25,11 +25,6 @@ const StructuredData: React.FC = () => {
     "timeRequired": "PT2H",
     "numberOfCredits": 0,
     "coursePrerequisites": "No experience required",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "1000"
-    },
     "offers": {
       "@type": "Offer",
       "price": "0",

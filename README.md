@@ -5,12 +5,11 @@ An interactive web-based platform for learning Linux terminal commands and comma
 ## Features
 
 - **20 Interactive Lessons**: Comprehensive curriculum covering essential Linux terminal commands
-- **Progress Tracking**: User authentication with Supabase to track learning progress
-- **Interactive Terminal Simulator**: Practice commands in a safe, simulated environment
+- **Progress Tracking**: Saved locally, and synced via Supabase when signed in
+- **Worked Examples**: Each command shown with example invocations and output
 - **PDF Certificate Generation**: Downloadable completion certificates
 - **Command Cheat Sheet**: PDF export of all learned commands
-- **Responsive Design**: Modern UI with dark theme and smooth animations
-- **Real-time Feedback**: Instant validation of terminal commands
+- **Responsive Design**: Modern UI with light and dark themes
 
 ## Tech Stack
 
@@ -80,19 +79,19 @@ src/
 - Estimated time and difficulty levels
 
 ### User Authentication
-- Supabase-powered authentication (email/password, OAuth)
-- Progress synchronization across devices
-- Guest mode for anonymous learning
+- Supabase-powered authentication (email/password)
+- Optional: the full course is available without an account
+- Progress synchronisation across devices once signed in
 
 ### PDF Generation
 - Completion certificates with user names and dates
 - Command cheat sheets with all learned commands
 - Professional styling and branding
 
-### Interactive Terminal
-- Simulated terminal environment
-- Command validation and feedback
-- Safety features preventing harmful commands
+### Lesson Content
+- 20 lessons, 64 commands, 166 worked examples
+- Practice exercises with progressive hints
+- Per-lesson quizzes
 
 ## Scripts
 
@@ -103,11 +102,12 @@ src/
 
 ## Deployment
 
-The application is configured for deployment on Netlify with the following build settings:
+Deploys as a standard Next.js app (SSR). Static export (`output: 'export'`) is **not**
+supported, because `src/app/lessons/[id]` is a dynamic route without `generateStaticParams`.
 
 - **Build Command**: `npm run build`
-- **Publish Directory**: `out` (for static export)
-- **Environment Variables**: Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- **Runtime**: Next.js 15 via the host's Next runtime (Netlify or Vercel)
+- **Environment Variables**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 ## Contributing
 
@@ -119,4 +119,6 @@ The application is configured for deployment on Netlify with the following build
 
 ## License
 
-This project is private and proprietary.
+Source is public for reference. Lesson content is &copy; Terminal Mastery — you're welcome to
+link to it, quote it with attribution, and share it. Please don't republish the course as your
+own or sell access to it.

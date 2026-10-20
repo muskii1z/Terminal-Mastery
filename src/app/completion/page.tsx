@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useAppContext } from '@/context/AppContext';
@@ -9,42 +9,83 @@ import Button from '@/components/ui/Button';
 import Certificate from '@/components/ui/Certificate';
 import { getTotalLessons } from '@/data/lessons';
 import { generateCommandCheatSheet, generateCertificate } from '@/utils/pdfGenerator';
+import { track } from '@/lib/analytics/posthog';
+
+const CERTIFICATE_NAME_KEY = 'terminal-mastery-certificate-name';
+
+// Module-scoped so the event fires once per page load, not on every render.
+let courseCompletionTracked = false;
 
 export default function CompletionPage() {
   const { user } = useAuth();
-  const { userProgress } = useAppContext();
+  const { userProgress, isLoading } = useAppContext();
   const router = useRouter();
   const totalLessons = getTotalLessons();
   const completedLessons = userProgress.lessonsCompleted.length;
+  const hasCompletedCourse = completedLessons >= totalLessons;
 
-  // Redirect if not all lessons completed
+  // No account required, so the name on the certificate is supplied here.
+  const [name, setName] = useState('');
+
   useEffect(() => {
-    if (completedLessons < totalLessons) {
+    if (user?.email) {
+      setName(current => current || user.email.split('@')[0]);
+      return;
+    }
+    try {
+      const saved = localStorage.getItem(CERTIFICATE_NAME_KEY);
+      if (saved) setName(current => current || saved);
+    } catch {
+      // localStorage unavailable; fall back to an empty field
+    }
+  }, [user]);
+
+  // Redirect only once progress has actually loaded -- otherwise a direct
+  // visit or refresh bounces before localStorage has been read.
+  useEffect(() => {
+    if (!isLoading && !hasCompletedCourse) {
       router.push('/lessons');
     }
-  }, [completedLessons, totalLessons, router]);
+  }, [isLoading, hasCompletedCourse, router]);
 
-  if (completedLessons < totalLessons) {
+  if (isLoading || !hasCompletedCourse) {
     return null;
   }
 
+  if (typeof window !== 'undefined' && !courseCompletionTracked) {
+    courseCompletionTracked = true;
+    track('course_completed', { lessons: completedLessons });
+  }
+
+  const certificateName = name.trim();
+
+  const handleNameChange = (value: string) => {
+    setName(value);
+    try {
+      localStorage.setItem(CERTIFICATE_NAME_KEY, value);
+    } catch {
+      // Non-fatal: the name just won't persist across reloads
+    }
+  };
+
   const downloadCheatSheet = () => {
+    track('cheatsheet_downloaded');
     const pdf = generateCommandCheatSheet();
     pdf.save('terminal-commands-cheat-sheet.pdf');
   };
 
   const downloadCertificate = () => {
-    if (!user?.email) return;
-    const userName = user.email.split('@')[0];
-    const pdf = generateCertificate(userName);
+    if (!certificateName) return;
+    track('certificate_downloaded');
+    const pdf = generateCertificate(certificateName);
     pdf.save('terminal-mastery-certificate.pdf');
   };
 
   // Prepare certificate data
   const certificateData = {
+    studentName: certificateName,
     studentEmail: user?.email || '',
     completionDate: new Date(),
-    // You could also store/track actual completion date in userProgress
   };
 
   return (
@@ -90,6 +131,22 @@ export default function CompletionPage() {
             <h2 className="text-3xl font-bold theme-text-primary mb-8 text-center">
               Your Certificate of Completion
             </h2>
+            <div className="max-w-md mx-auto mb-8">
+              <label
+                htmlFor="certificate-name"
+                className="block text-sm font-medium theme-text-primary mb-2 text-left"
+              >
+                Name on your certificate
+              </label>
+              <input
+                id="certificate-name"
+                type="text"
+                value={name}
+                onChange={event => handleNameChange(event.target.value)}
+                placeholder="Enter your name"
+                className="w-full px-4 py-3 rounded-md bg-bg-secondary border border-border-primary theme-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue"
+              />
+            </div>
             <Certificate {...certificateData} />
           </div>
 
@@ -104,7 +161,7 @@ export default function CompletionPage() {
                   📄 Command Cheat Sheet
                 </h3>
                 <p className="theme-text-secondary text-sm mb-4">
-                  Download a handy reference with all 20 commands you&apos;ve learned. Perfect for quick lookups while working.
+                  Download a handy reference with every command you&apos;ve learned. Perfect for quick lookups while working.
                 </p>
                 <Button onClick={downloadCheatSheet} className="w-full">
                   Download Command Reference
@@ -118,8 +175,13 @@ export default function CompletionPage() {
                 <p className="theme-text-secondary text-sm mb-4">
                   Download a PDF version of your certificate above to save, print, or share your achievement.
                 </p>
-                <Button onClick={downloadCertificate} variant="secondary" className="w-full">
-                  Download PDF Certificate
+                <Button
+                  onClick={downloadCertificate}
+                  variant="secondary"
+                  className="w-full"
+                  disabled={!certificateName}
+                >
+                  {certificateName ? 'Download PDF Certificate' : 'Enter your name above first'}
                 </Button>
               </div>
             </div>

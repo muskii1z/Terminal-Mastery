@@ -50,14 +50,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const supabase = createClient();
 
   useEffect(() => {
-    // Get initial session
+    // Get initial session.
+    // Never let a failing/hanging auth backend leave the app stuck on
+    // `initialized: false` -- every consumer renders a blocking "Loading..."
+    // until this settles, so always resolve, even on error or timeout.
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setAuthState({
-        user: session?.user ? mapSupabaseUser(session.user) : null,
-        loading: false,
-        initialized: true,
-      });
+      try {
+        const { data: { session } } = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('auth getSession timed out')), 5000)
+          ),
+        ]);
+        setAuthState({
+          user: session?.user ? mapSupabaseUser(session.user) : null,
+          loading: false,
+          initialized: true,
+        });
+      } catch (error) {
+        console.warn('[auth] could not restore session; continuing signed out:', error);
+        setAuthState({ user: null, loading: false, initialized: true });
+      }
     };
 
     getInitialSession();

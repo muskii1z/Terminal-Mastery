@@ -24,14 +24,15 @@ export default function TermsPage() {
             <section className="mb-8">
               <h2 className="text-2xl font-bold text-text-primary mb-4">Use License</h2>
               <p className="text-text-secondary mb-4">
-                Permission is granted to temporarily access Terminal Mastery for personal, non-commercial
-                transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+                Terminal Mastery is free to use for learning, personally or at work. You are welcome to
+                share it: link to it, post screenshots, quote lessons with attribution, and share any
+                certificate you earn. Under this license you may not:
               </p>
               <ul className="list-disc pl-6 text-text-secondary space-y-2">
-                <li>Modify or copy the materials</li>
-                <li>Use the materials for any commercial purpose or for any public display</li>
-                <li>Attempt to reverse engineer any software contained on the website</li>
-                <li>Remove any copyright or other proprietary notations from the materials</li>
+                <li>Republish the lesson content as your own, or present it as another party&apos;s work</li>
+                <li>Sell or charge for access to the course materials</li>
+                <li>Remove attribution or copyright notices from materials you share</li>
+                <li>Misrepresent a certificate, or claim a completion you did not earn</li>
               </ul>
             </section>
 

@@ -10,10 +10,10 @@ import { useAppContext } from '@/context/AppContext';
 import { CommandExample, Lesson, PracticeExercise, QuizQuestion } from '@/types';
 import MarkdownContent from '@/components/ui/MarkdownContent';
 import TerminalBlock from '@/components/ui/TerminalBlock';
-import LessonWalkthroughCard from '@/components/ui/LessonWalkthroughCard';
+import { track } from '@/lib/analytics/posthog';
 
 export default function LessonPage() {
-  const { user, initialized } = useAuth();
+  const { user } = useAuth();
   const { userProgress, completeLesson } = useAppContext();
   const router = useRouter();
   const params = useParams();
@@ -77,6 +77,13 @@ export default function LessonPage() {
     });
   };
 
+  // Funnel: which lesson does a learner reach, and where do they stop?
+  useEffect(() => {
+    const lesson = getLessonById(lessonId);
+    if (!lesson) return;
+    track('lesson_started', { lesson_id: lessonId, lesson_title: lesson.title });
+  }, [lessonId]);
+
   // Handler for marking lesson complete
   const handleMarkComplete = async () => {
     if (isMarkingComplete || isLessonCompleted) return;
@@ -84,6 +91,12 @@ export default function LessonPage() {
     setIsMarkingComplete(true);
     try {
       await completeLesson(lessonId);
+      const lesson = getLessonById(lessonId);
+      track('lesson_completed', {
+        lesson_id: lessonId,
+        lesson_title: lesson?.title,
+        completed_count: userProgress.lessonsCompleted.length + 1,
+      });
     } catch (error) {
       console.error('Error marking lesson complete:', error);
     } finally {
@@ -121,9 +134,15 @@ export default function LessonPage() {
     }
   };
 
+  // A lesson without authored quiz questions must not be given a quiz step,
+  // otherwise the stepper renders an empty "Question 1 of" screen.
+  const lessonHasQuiz = (lesson: Lesson) =>
+    Boolean(lesson.quiz?.questions?.length);
+
   // Get total step count for a lesson
   const getStepCount = (lesson: Lesson) => {
-    return 1 + lesson.content.commands.length + 1 + 1 + 1; // intro + commands + practice + quiz + completion
+    // intro + commands + practice + (quiz) + completion
+    return 1 + lesson.content.commands.length + 1 + (lessonHasQuiz(lesson) ? 1 : 0) + 1;
   };
 
   // Get step title for display
@@ -134,7 +153,7 @@ export default function LessonPage() {
       return lesson.content.commands[commandIndex].name;
     }
     if (stepIndex === lesson.content.commands.length + 1) return 'Practice';
-    if (stepIndex === lesson.content.commands.length + 2) return 'Quiz';
+    if (lessonHasQuiz(lesson) && stepIndex === lesson.content.commands.length + 2) return 'Quiz';
     if (stepIndex === getStepCount(lesson) - 1) return 'Complete';
     return '';
   };
@@ -326,7 +345,7 @@ export default function LessonPage() {
           ))}
         </div>
       );
-    } else if (stepIndex === lesson.content.commands.length + 2) {
+    } else if (lessonHasQuiz(lesson) && stepIndex === lesson.content.commands.length + 2) {
       // Quiz step
       return (
         <div className="step-content">
@@ -595,31 +614,6 @@ export default function LessonPage() {
     return null;
   };
 
-  // Client-side protection - redirect if not authenticated
-  useEffect(() => {
-    if (initialized && !user) {
-      router.push('/login');
-    }
-  }, [user, initialized, router]);
-
-  // Show loading while checking authentication
-  if (!initialized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-text-secondary">Loading...</div>
-      </div>
-    );
-  }
-
-  // Show loading while redirecting unauthenticated users
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-text-secondary">Redirecting to login...</div>
-      </div>
-    );
-  }
-
   // Get lesson data
   const lesson = getLessonById(lessonId);
   const nextLesson = getNextLesson(lessonId);
@@ -714,11 +708,6 @@ export default function LessonPage() {
           {/* Step Content */}
           <div className="flex-1 px-4 py-8 pb-8">
             <div className="max-w-3xl mx-auto">
-              {/* Show floating walkthrough card on lessons */}
-              <LessonWalkthroughCard
-                variant="floating"
-              />
-
               <div className="text-lg leading-relaxed">
                 {renderStepperStep(lesson, currentStepIndex)}
               </div>
