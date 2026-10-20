@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, IBM_Plex_Sans, IBM_Plex_Mono, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
 import { AuthProvider } from "@/context/AuthContext";
@@ -16,6 +16,30 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Workbench type: Plex for reading and the terminal (IBM built the 3270
+// terminals), Martian Mono for lesson titles only.
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
+
+const martianMono = Martian_Mono({
+  variable: "--font-martian",
+  subsets: ["latin"],
+  axes: ["wdth"],
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -71,13 +95,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Apply the saved or system theme before first paint, so pages never
+            flash the wrong colours and then fade into the right ones. Mirrors
+            the logic in ThemeContext. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}var r=document.documentElement;r.setAttribute('data-theme',t);r.classList.add(t);r.classList.remove(t==='dark'?'light':'dark')}catch(e){}})();`,
+          }}
+        />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#2188ff" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-bg-primary text-text-primary`}
+        className={`${geistSans.variable} ${geistMono.variable} ${plexSans.variable} ${plexMono.variable} ${martianMono.variable} antialiased min-h-screen bg-bg-primary text-text-primary`}
         suppressHydrationWarning={true}
       >
         <AnalyticsProvider>
