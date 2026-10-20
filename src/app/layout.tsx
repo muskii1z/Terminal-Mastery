@@ -4,6 +4,8 @@ import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { AnalyticsProvider } from "@/lib/analytics/posthog";
+import { SITE_URL } from "@/lib/site";
 import FloatingBackground from "@/components/ui/FloatingBackground";
 
 const geistSans = Geist({
@@ -17,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://terminal-mastery.com'),
+  metadataBase: new URL(SITE_URL),
   title: "Master the Terminal in under 2 Hours | Terminal Mastery",
   description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
   keywords: "linux terminal, command line, terminal tutorial, bash commands, learn terminal, terminal course, linux commands",
@@ -39,16 +41,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Master the Terminal in under 2 Hours",
     description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
-    url: "https://terminal-mastery.com",
+    url: SITE_URL,
     siteName: "Terminal Mastery",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Terminal Mastery - Free 20-lesson course",
-      },
-    ],
     locale: "en_US",
     type: "website",
   },
@@ -56,7 +50,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Master the Terminal in under 2 Hours",
     description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
-    images: ["/og-image.png"],
     creator: "@terminal_mastery",
   },
   robots: {
@@ -69,9 +62,6 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },
-  verification: {
-    google: "your-google-verification-code",
   },
 };
 
@@ -90,7 +80,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-bg-primary text-text-primary`}
         suppressHydrationWarning={true}
       >
-        <ThemeProvider>
+        <AnalyticsProvider>
+          <ThemeProvider>
           <AuthProvider>
             <AppProvider>
               <div className="min-h-screen bg-bg-primary relative">
@@ -101,7 +92,8 @@ export default function RootLayout({
               </div>
             </AppProvider>
           </AuthProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </AnalyticsProvider>
       </body>
     </html>
   );

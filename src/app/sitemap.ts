@@ -1,27 +1,28 @@
 import { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://terminal-mastery.com',
+      url: SITE_URL,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1,
     },
     {
-      url: 'https://terminal-mastery.com/lessons',
+      url: `${SITE_URL}/lessons`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: 'https://terminal-mastery.com/login',
+      url: `${SITE_URL}/login`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.3,
     },
     {
-      url: 'https://terminal-mastery.com/signup',
+      url: `${SITE_URL}/signup`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.5,

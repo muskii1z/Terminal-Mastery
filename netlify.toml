@@ -1,0 +1,22 @@
+# Terminal Mastery — Netlify deploy config
+#
+# NOTE: this app cannot use static export (`output: 'export'`).
+# src/app/lessons/[id] is a dynamic route without generateStaticParams,
+# so it must be server-rendered. The Next.js runtime handles that.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
