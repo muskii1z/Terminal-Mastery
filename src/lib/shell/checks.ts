@@ -17,13 +17,16 @@ export type Check =
   /** The learner ran a command matching these conditions. */
   | {
       kind: 'ran';
-      command: string;
+      /** Omit to match any command, e.g. "any command that failed". */
+      command?: string;
       /** Exact argument list, e.g. ['-']. */
       args?: string[];
       /** The single argument must be one of these, e.g. ['..', '../']. */
       argIn?: string[];
       /** The command was run with no arguments. */
       noArgs?: boolean;
+      /** The command was run with at least one argument. */
+      hasArgs?: boolean;
       /** The first argument starts with this, e.g. '/' for an absolute path. */
       argStartsWith?: string;
       /** Where the learner ended up afterwards. */
@@ -32,7 +35,12 @@ export type Check =
       ok?: boolean;
     }
   /** The learner completed a name with Tab and the command worked. */
-  | { kind: 'usedTab' };
+  | { kind: 'usedTab' }
+  /**
+   * Something done outside the practice terminal, like opening the terminal on
+   * their own computer. It can't be observed, so the learner marks it done.
+   */
+  | { kind: 'manual' };
 
 export function isSatisfied(check: Check, shell: Shell): boolean {
   const expand = (path: string) =>
@@ -56,6 +64,9 @@ export function isSatisfied(check: Check, shell: Shell): boolean {
     case 'usedTab':
       return shell.events.some((e) => e.usedTab && e.ok);
 
+    case 'manual':
+      return false;
+
     case 'ran':
       return shell.events.some((e) => matchesRan(check, e, expand));
   }
@@ -66,9 +77,10 @@ function matchesRan(
   event: ShellEvent,
   expand: (path: string) => string
 ): boolean {
-  if (event.command !== check.command) return false;
+  if (check.command !== undefined && event.command !== check.command) return false;
   if (event.ok !== (check.ok ?? true)) return false;
   if (check.noArgs && event.args.length > 0) return false;
+  if (check.hasArgs && event.args.length === 0) return false;
   if (check.args && event.args.join('\u0000') !== check.args.join('\u0000')) return false;
   if (check.argIn && !(event.args.length === 1 && check.argIn.includes(event.args[0]))) return false;
   if (check.argStartsWith && !(event.args[0] ?? '').startsWith(check.argStartsWith)) return false;

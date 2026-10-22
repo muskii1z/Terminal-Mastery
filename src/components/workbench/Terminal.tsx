@@ -10,7 +10,7 @@ interface TerminalProps {
   inputRef: RefObject<HTMLInputElement | null>;
   onRun: (raw: string, usedTab: boolean) => void;
   onPrint: (lines: Line[]) => void;
-  onClear: () => void;
+  onInterrupt: (partial: string) => void;
   onReset: () => void;
 }
 
@@ -26,7 +26,7 @@ export function renderLine(line: Line, key: React.Key) {
   );
 }
 
-export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onClear, onReset }: TerminalProps) {
+export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onInterrupt, onReset }: TerminalProps) {
   const [value, setValue] = useState('');
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const usedTab = useRef(false);
@@ -62,7 +62,7 @@ export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onCle
     }
 
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-      const past = shell.events.map((e) => e.raw);
+      const past = shell.events.filter((e) => e.command !== '^C').map((e) => e.raw);
       if (!past.length) return;
       event.preventDefault();
       const start = historyIndex ?? past.length;
@@ -78,16 +78,21 @@ export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onCle
     }
 
     if (event.ctrlKey && event.key.toLowerCase() === 'c') {
+      // With text selected, Ctrl+C copies (as in Windows Terminal) rather than cancelling.
+      const input = event.currentTarget;
+      if (input.selectionStart !== input.selectionEnd) return;
       event.preventDefault();
-      onPrint([echo(value + '^C')]);
+      onInterrupt(value);
       setValue('');
+      setHistoryIndex(null);
       usedTab.current = false;
       return;
     }
 
+    // Ctrl+L behaves exactly like typing `clear`.
     if (event.ctrlKey && event.key.toLowerCase() === 'l') {
       event.preventDefault();
-      onClear();
+      onRun('clear', false);
     }
   };
 

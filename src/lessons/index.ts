@@ -1,4 +1,5 @@
 import type { Lesson } from './types';
+import lesson01 from './lesson-01';
 import lesson02 from './lesson-02';
 
 /**
@@ -6,6 +7,7 @@ import lesson02 from './lesson-02';
  * the legacy lesson page until they're migrated.
  */
 const lessons: Record<string, Lesson> = {
+  [lesson01.id]: lesson01,
   [lesson02.id]: lesson02,
 };
 

@@ -13,6 +13,8 @@ export type Block =
   | { type: 'list'; items: string[] }
   /** A command and what it prints, shown as a small terminal snippet. */
   | { type: 'example'; command: string; output?: string }
+  /** The terminal prompt on its own, coloured as the practice terminal shows it. */
+  | { type: 'prompt'; path?: string }
   /** A side note. `platform` is for real Mac/Linux differences. */
   | { type: 'note'; tone: 'tip' | 'platform'; text: string };
 

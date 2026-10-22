@@ -19,6 +19,9 @@ interface BookProps {
   step: number;
   onStep: (step: number) => void;
   isTaskDone: (id: string) => boolean;
+  /** Furthest step reached; steps with nothing to type count as done once passed. */
+  furthestStep: number;
+  onManualDone: (id: string) => void;
   tasksLeft: Task[];
   quiz: QuizState;
   onAnswer: (questionId: string, option: number) => void;
@@ -56,17 +59,25 @@ function BlockView({ block }: { block: Block }) {
           {block.output && <>{'\n'}<span className={s.exampleOut}>{block.output}</span></>}
         </pre>
       );
+    case 'prompt':
+      return (
+        <pre className={s.example} aria-label="The terminal prompt">
+          <span className={s['t-prompt']}>you@terminal-mastery</span>:
+          <span className={s['t-path']}>{block.path ?? '~'}</span>
+          <span className={s['t-prompt']}>$</span>
+        </pre>
+      );
     case 'note':
       return (
         <aside className={s.note}>
-          <span className={s.noteLabel}>{block.tone === 'platform' ? 'Mac and Linux' : 'Tip'}</span>
+          <span className={s.noteLabel}>{block.tone === 'platform' ? 'Mac, Windows and Linux' : 'Tip'}</span>
           <p className={s.noteText}><Inline text={block.text} /></p>
         </aside>
       );
   }
 }
 
-function TaskRow({ task, state }: { task: Task; state: TaskState }) {
+function TaskRow({ task, state, onManualDone }: { task: Task; state: TaskState; onManualDone: (id: string) => void }) {
   const [showHint, setShowHint] = useState(false);
   const label = state === 'done' ? 'Done' : state === 'current' ? 'Do this now' : 'Not done yet';
   return (
@@ -76,9 +87,16 @@ function TaskRow({ task, state }: { task: Task; state: TaskState }) {
       </span>
       <span className={s.taskPrompt}>{task.prompt}</span>
       {state !== 'done' ? (
-        <button type="button" className={s.hintButton} aria-expanded={showHint} onClick={() => setShowHint((v) => !v)}>
-          {showHint ? 'Hide hint' : 'Hint'}
-        </button>
+        <span className={s.taskActions}>
+          <button type="button" className={s.hintButton} aria-expanded={showHint} onClick={() => setShowHint((v) => !v)}>
+            {showHint ? 'Hide hint' : 'Hint'}
+          </button>
+          {task.check.kind === 'manual' && (
+            <button type="button" className={s.didItButton} onClick={() => onManualDone(task.id)}>
+              I did it
+            </button>
+          )}
+        </span>
       ) : (
         <span />
       )}
@@ -92,11 +110,11 @@ function StepRail({ lesson, step, onStep, isSectionDone, quizDone }: {
   lesson: Lesson;
   step: number;
   onStep: (step: number) => void;
-  isSectionDone: (section: Section) => boolean;
+  isSectionDone: (section: Section, index: number) => boolean;
   quizDone: boolean;
 }) {
   const items = [
-    ...lesson.sections.map((section) => ({ label: section.label, title: section.title, done: isSectionDone(section) })),
+    ...lesson.sections.map((section, i) => ({ label: section.label, title: section.title, done: isSectionDone(section, i) })),
     { label: 'quiz', title: 'Check your understanding', done: quizDone },
   ];
   return (
@@ -124,19 +142,20 @@ function StepRail({ lesson, step, onStep, isSectionDone, quizDone }: {
 }
 
 export default function Book(props: BookProps) {
-  const { lesson, step, onStep, isTaskDone, tasksLeft, quiz, finished } = props;
+  const { lesson, step, onStep, isTaskDone, furthestStep, onManualDone, tasksLeft, quiz, finished } = props;
   const [quizError, setQuizError] = useState('');
   const [finishMessage, setFinishMessage] = useState('');
 
   const sectionCount = lesson.sections.length;
   const totalSteps = sectionCount + 1;
   const taskCount = lesson.sections.reduce((n, sec) => n + sec.tasks.length, 0);
-  const isSectionDone = (section: Section) => section.tasks.every((t) => isTaskDone(t.id));
+  const isSectionDone = (section: Section, index: number) =>
+    section.tasks.length ? section.tasks.every((t) => isTaskDone(t.id)) : furthestStep > index;
   const score = lesson.quiz.filter((q) => quiz.answers[q.id] === q.correctAnswer).length;
 
   const section = step < sectionCount ? lesson.sections[step] : null;
   const firstOpenHere = section?.tasks.find((t) => !isTaskDone(t.id));
-  const stepDone = section ? isSectionDone(section) : quiz.submitted;
+  const stepDone = section ? section.tasks.every((t) => isTaskDone(t.id)) : quiz.submitted;
   const nextTitle = step + 1 < sectionCount ? lesson.sections[step + 1].title : 'Quiz';
 
   const submitQuiz = () => {
@@ -188,12 +207,19 @@ export default function Book(props: BookProps) {
 
             {section.tasks.length > 0 && (
               <div className={s.yourTurn}>
-                <p className={s.yourTurnLabel}>{stepDone ? 'Done' : 'Your turn, in the terminal'}</p>
+                <p className={s.yourTurnLabel}>
+                  {stepDone
+                    ? 'Done'
+                    : section.tasks.every((t) => t.check.kind === 'manual')
+                      ? 'Your turn, on your own computer'
+                      : 'Your turn, in the terminal'}
+                </p>
                 <ul className={s.tasks} aria-label="Tasks">
                   {section.tasks.map((task) => (
                     <TaskRow
                       key={task.id}
                       task={task}
+                      onManualDone={onManualDone}
                       state={isTaskDone(task.id) ? 'done' : task.id === firstOpenHere?.id ? 'current' : 'pending'}
                     />
                   ))}

@@ -49,7 +49,7 @@ export interface ShellOptions {
   startDir?: string;
 }
 
-const COMMANDS = ['cat', 'cd', 'clear', 'echo', 'help', 'ls', 'pwd', 'whoami'];
+const COMMANDS = ['cat', 'cd', 'clear', 'date', 'echo', 'help', 'ls', 'pwd', 'whoami'];
 
 /**
  * Real commands this practice terminal doesn't run. Saying "command not found"
@@ -185,6 +185,10 @@ export class Shell {
         lines = [text(this.user)];
         break;
 
+      case 'date':
+        lines = [text(formatDate(new Date()))];
+        break;
+
       case 'clear':
         clear = true;
         break;
@@ -196,6 +200,8 @@ export class Shell {
           text('  ls [-a] [-l]   list what is in a folder', 'muted'),
           text('  cd <folder>    move into a folder', 'muted'),
           text('  cat <file>     show what is inside a file', 'muted'),
+          text('  echo <words>   print the words back', 'muted'),
+          text('  whoami, date   who you are, and the date and time', 'muted'),
           text('  clear          clear the screen  (or Ctrl+L)', 'muted'),
           text('Tab completes names. Up and down arrows recall commands.', 'muted'),
         ];
@@ -214,6 +220,27 @@ export class Shell {
     event.cwdAfter = this.cwd;
     this.events.push(event);
     return { lines, clear, event };
+  }
+
+  /**
+   * Ctrl+C: abandons the line being typed. Recorded so lessons can check the
+   * learner has used it, and kept out of command history recall.
+   */
+  interrupt(partial: string): ShellEvent {
+    const event: ShellEvent = {
+      raw: partial,
+      command: '^C',
+      args: [],
+      flags: '',
+      cwdBefore: this.cwd,
+      cwdAfter: this.cwd,
+      ok: true,
+      listed: [],
+      listedHidden: false,
+      usedTab: false,
+    };
+    this.events.push(event);
+    return event;
   }
 
   private ls(args: string[], flags: string, event: ShellEvent): Line[] {
@@ -437,6 +464,23 @@ function toneFor(name: string, node: FsNode): Tone | undefined {
   if (node.kind === 'dir') return 'dir';
   if (name.endsWith('.sh')) return 'exec';
   return undefined;
+}
+
+/** `date` in the default GNU format, e.g. "Tue Oct 20 14:03:22 UTC 2026". Always the real now. */
+function formatDate(d: Date): string {
+  const weekday = d.toLocaleString('en-US', { weekday: 'short' });
+  const month = d.toLocaleString('en-US', { month: 'short' });
+  const day = String(d.getDate()).padStart(2, ' ');
+  const time = [d.getHours(), d.getMinutes(), d.getSeconds()].map((n) => String(n).padStart(2, '0')).join(':');
+  let zone = 'UTC';
+  try {
+    zone = new Intl.DateTimeFormat('en-US', { timeZoneName: 'short' })
+      .formatToParts(d)
+      .find((part) => part.type === 'timeZoneName')?.value ?? 'UTC';
+  } catch {
+    // Older browsers without timeZoneName support fall back to UTC.
+  }
+  return `${weekday} ${month} ${day} ${time} ${zone} ${d.getFullYear()}`;
 }
 
 /** A stable, recent-looking timestamp for `ls -l`, so output never looks stale. */

@@ -24,6 +24,8 @@ interface Saved {
   quiz: QuizState;
   finished: boolean;
   step?: number;
+  /** Furthest step reached. A step with nothing to type counts as done once passed. */
+  furthest?: number;
 }
 
 const storageKey = (id: string) => `tm:lesson:${id}`;
@@ -58,6 +60,7 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
   const [quiz, setQuiz] = useState<QuizState>({ answers: {}, submitted: false });
   const [finished, setFinished] = useState(false);
   const [step, setStep] = useState(0);
+  const [furthest, setFurthest] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [view, setView] = useState<'book' | 'machine'>('book');
 
@@ -79,18 +82,21 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
       setFinished(saved.finished);
       // Resume where they left off, or at the first step with work left.
       const firstOpen = lesson.sections.findIndex((sec) => sec.tasks.some((t) => !restoredDone.has(t.id)));
-      setStep(saved.step ?? (firstOpen === -1 ? sectionCount : firstOpen));
+      const resumeAt = saved.step ?? (firstOpen === -1 ? sectionCount : firstOpen);
+      setStep(resumeAt);
+      setFurthest(Math.max(saved.furthest ?? 0, resumeAt));
     }
     setLoaded(true);
     track('lesson_started', { lesson_id: lesson.id, lesson_title: lesson.title, format: 'workbench' });
   }, [lesson, sectionCount]);
 
   useEffect(() => {
-    if (loaded) save(lesson.id, { done: [...done], quiz, finished, step });
-  }, [loaded, lesson.id, done, quiz, finished, step]);
+    if (loaded) save(lesson.id, { done: [...done], quiz, finished, step, furthest });
+  }, [loaded, lesson.id, done, quiz, finished, step, furthest]);
 
   useEffect(() => {
     bookRef.current?.scrollTo({ top: 0 });
+    setFurthest((f) => Math.max(f, step));
   }, [step]);
 
   const goToStep = (next: number) => {
@@ -112,6 +118,20 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
     evaluate();
   };
 
+  const interrupt = (partial: string) => {
+    const echo: Line = [...shell.prompt(), { text: ' ' + partial + '^C' }];
+    shell.interrupt(partial);
+    setLines((prev) => [...prev, echo]);
+    evaluate();
+  };
+
+  // Tasks done outside the practice terminal can't be observed; the learner marks them.
+  const markManualDone = (id: string) => {
+    if (doneRef.current.has(id)) return;
+    setDone((prev) => new Set([...prev, id]));
+    track('task_completed', { lesson_id: lesson.id, task_id: id, manual: true });
+  };
+
   const reset = () => {
     shell.reset();
     setLines([...WELCOME, [{ text: 'Files reset to how they started.', tone: 'muted' }], []]);
@@ -123,6 +143,7 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
   const viewedSection = step < sectionCount ? lesson.sections[step] : null;
   const nowTask = viewedSection?.tasks.find((t) => !done.has(t.id));
   const stepDone = viewedSection ? !nowTask : false;
+  const readingStep = viewedSection ? viewedSection.tasks.length === 0 : false;
   const tasksLeft = tasks.filter((t) => !done.has(t.id));
   const nextTitle = step + 1 < sectionCount ? lesson.sections[step + 1].title : 'Quiz';
 
@@ -193,6 +214,8 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
             step={step}
             onStep={goToStep}
             isTaskDone={(id) => done.has(id)}
+            furthestStep={furthest}
+            onManualDone={markManualDone}
             tasksLeft={tasksLeft}
             quiz={quiz}
             onAnswer={(id, option) => setQuiz((q) => ({ ...q, answers: { ...q.answers, [id]: option } }))}
@@ -217,12 +240,20 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
               <>
                 <span className={s.nowLabel}>now</span>
                 <span className={s.nowText}>{nowTask.prompt}</span>
-                <span />
+                {nowTask.check.kind === 'manual' ? (
+                  <button type="button" className={s.nowNext} onClick={() => markManualDone(nowTask.id)}>
+                    I did it
+                  </button>
+                ) : (
+                  <span />
+                )}
               </>
             ) : stepDone ? (
               <>
-                <span className={s.nowLabel}>done</span>
-                <span className={s.nowText} data-done>Step done.</span>
+                <span className={s.nowLabel}>{readingStep ? 'read' : 'done'}</span>
+                <span className={s.nowText} data-done={readingStep ? undefined : true}>
+                  {readingStep ? 'Nothing to type in this step. Read it, then carry on.' : 'Step done.'}
+                </span>
                 <button
                   type="button"
                   className={s.nowNext}
@@ -255,7 +286,7 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
             inputRef={inputRef}
             onRun={run}
             onPrint={(extra) => setLines((prev) => [...prev, ...extra])}
-            onClear={() => setLines([])}
+            onInterrupt={interrupt}
             onReset={reset}
           />
         </div>
