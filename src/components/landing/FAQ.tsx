@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { COURSE } from '@/lessons/summary';
 
 interface FAQItem {
   question: string;
@@ -17,15 +18,15 @@ const FAQ: React.FC = () => {
     },
     {
       question: "How long does it take to complete?",
-      answer: "You can master the terminal basics in just 2 hours. Our bite-sized lessons are designed for busy schedules — learn at your own pace, whether that's 15 minutes a day or completing everything in one weekend session."
+      answer: `About ${COURSE.hours} hours for all ${COURSE.lessons} lessons. Each one takes 10 to 20 minutes, and your progress is saved in your browser, so you can do one a day or the whole course in a weekend.`
     },
     {
       question: "Is Terminal Mastery really free?",
-      answer: "Absolutely! All core lessons are completely free forever. Create a free account to track your progress, save your place, and access interactive exercises. No credit card required, no hidden fees."
+      answer: "Yes. Every lesson is free, and you don't need an account: open a lesson and start typing. Your progress is saved in your browser."
     },
     {
       question: "Will this actually help me become a better developer?",
-      answer: "Yes! The terminal is essential for modern development. You'll learn to navigate files faster than any GUI, use Git effectively, run development servers, manage dependencies, and deploy code. These skills are used daily by professional developers."
+      answer: "Yes. Git, package managers, servers and AI coding tools all run in the terminal. This course teaches the foundation they sit on: moving around, working with files, searching, pipes, permissions, editing with nano and managing processes. With that, the rest stops looking like magic."
     },
     {
       question: "I've never touched a terminal before. Is this really for me?",
@@ -33,7 +34,7 @@ const FAQ: React.FC = () => {
     },
     {
       question: "What makes this different from other terminal tutorials?",
-      answer: "We focus on practical skills you'll actually use as a developer, not academic theory. Our interactive exercises let you practice real commands safely, with instant feedback. Plus, everything is designed to be completed in just 2 hours."
+      answer: "You don't watch or read about commands, you type them. Every lesson has a practice terminal beside it that behaves like the real thing, error messages included, and checks each task as you do it. Nothing you type can touch your real computer."
     }
   ];
 

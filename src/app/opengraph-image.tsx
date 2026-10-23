@@ -1,7 +1,8 @@
 import { ImageResponse } from 'next/og';
+import { COURSE } from '@/lessons/summary';
 
 export const runtime = 'edge';
-export const alt = 'Terminal Mastery — Master the Terminal in under 2 Hours';
+export const alt = 'Terminal Mastery: learn the terminal by using it';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -58,14 +59,14 @@ export default async function OpengraphImage() {
             </div>
 
             <div style={{ display: 'flex', color: '#e6edf3', fontSize: 62, fontWeight: 700, lineHeight: 1.15, marginTop: 14 }}>
-              Master the Terminal
+              Learn the terminal
             </div>
             <div style={{ display: 'flex', fontSize: 62, fontWeight: 700, lineHeight: 1.15 }}>
-              <span style={{ color: '#2188ff' }}>in under 2 hours</span>
+              <span style={{ color: '#2188ff' }}>by using it</span>
             </div>
 
             <div style={{ display: 'flex', color: '#8b949e', fontSize: 27, marginTop: 28 }}>
-              20 lessons &nbsp;·&nbsp; free &nbsp;·&nbsp; no account needed
+              {COURSE.lessons} lessons &nbsp;·&nbsp; about {COURSE.hours} hours &nbsp;·&nbsp; free, no account
             </div>
           </div>
         </div>

@@ -132,15 +132,11 @@ const Header: React.FC = () => {
             </>
           ) : (
             <>
-              <Link href="/login" className="no-underline" scroll={false}>
-                <button className="nav-link">
-                  Sign In
-                </button>
-              </Link>
-
-              <Link href="/signup" className="no-underline" scroll={false}>
+              {/* Accounts are offline until the backend is rebuilt (see BACKLOG.md), so
+                  signed-out visitors get the course instead of sign-in links. */}
+              <Link href="/lessons/1" className="no-underline" scroll={false}>
                 <button className="clean-button-primary text-sm font-medium px-4 py-2">
-                  Sign Up
+                  Start Lesson 1
                 </button>
               </Link>
             </>

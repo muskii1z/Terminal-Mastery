@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Button from '@/components/ui/Button';
+import { COURSE } from '@/lessons/summary';
 import TrustRow from '@/components/landing/TrustRow';
 import SocialProof from '@/components/landing/SocialProof';
 import BenefitsSection from '@/components/landing/BenefitsSection';
@@ -32,22 +33,22 @@ export default function Home() {
               {/* Left Column - Content */}
               <div className="text-center lg:text-left">
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-text-primary mb-6 leading-tight">
-                  Master the Terminal in{' '}
+                  Learn the terminal{' '}
                   <span className="bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
-                    under 2 Hours
+                    by using it
                   </span>
                 </h1>
 
                 <p className="text-xl text-text-secondary mb-8 max-w-2xl lg:max-w-none leading-relaxed">
-                  Learn 20 essential Linux commands in under 2 hours total.{' '}
-                  <span className="text-accent-blue font-medium">Interactive practice, quick quizzes, and progress tracking.</span>
+                  {COURSE.lessons} hands-on lessons, about {COURSE.hours} hours in total.{' '}
+                  <span className="text-accent-blue font-medium">Type every command into a practice terminal that checks your work.</span>
                 </p>
 
                 {/* Primary CTA */}
                 <div className="mb-8">
-                  <Link href="/signup" className="inline-block" scroll={false}>
+                  <Link href="/lessons/1" className="inline-block" scroll={false}>
                     <Button size="lg" className="text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                      Sign Up Free
+                      Start Lesson 1
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -61,7 +62,7 @@ export default function Home() {
                 {/* Secondary CTA */}
                 <div className="mt-6">
                   <Link href="/lessons" className="inline-flex items-center text-accent-blue hover:text-accent-purple transition-colors" scroll={false}>
-                    <span className="text-sm font-medium">Browse all 20 lessons</span>
+                    <span className="text-sm font-medium">Browse all {COURSE.lessons} lessons</span>
                     <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>

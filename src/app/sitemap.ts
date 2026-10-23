@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { SITE_URL } from '@/lib/site'
+import { LESSONS } from '@/lessons'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -15,17 +16,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
-    {
-      url: `${SITE_URL}/login`,
+    ...LESSONS.map((lesson) => ({
+      url: `${SITE_URL}/lessons/${lesson.id}`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    },
-    {
-      url: `${SITE_URL}/signup`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
   ]
 }

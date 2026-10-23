@@ -1,6 +1,5 @@
 // Utility functions for Terminal Mastery
 
-import { UserProgress, Lesson } from '@/types';
 
 // Local storage utilities
 export const STORAGE_KEYS = {
@@ -24,23 +23,6 @@ export const loadFromLocalStorage = <T>(key: string, defaultValue: T): T => {
     console.error('Error loading from localStorage:', error);
     return defaultValue;
   }
-};
-
-// Progress calculation utilities
-export const calculateProgress = (lessons: Lesson[]): number => {
-  const completedLessons = lessons.filter(lesson => lesson.completed).length;
-  return lessons.length > 0 ? Math.round((completedLessons / lessons.length) * 100) : 0;
-};
-
-export const getNextLesson = (lessons: Lesson[], currentLessonId?: string): Lesson | null => {
-  if (!currentLessonId) {
-    return lessons.find(lesson => !lesson.completed) || null;
-  }
-  
-  const currentIndex = lessons.findIndex(lesson => lesson.id === currentLessonId);
-  const nextLesson = lessons.find((lesson, index) => index > currentIndex && !lesson.completed);
-  
-  return nextLesson || null;
 };
 
 // Animation utilities

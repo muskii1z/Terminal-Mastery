@@ -39,7 +39,7 @@ const BenefitsSection: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6">
-            Master the terminal in 2 hours
+            Learn the terminal by doing it
           </h2>
           <p className="text-xl text-text-secondary max-w-3xl mx-auto">
             Perfect for beginners — we&apos;ve designed every lesson to help you learn faster and remember longer

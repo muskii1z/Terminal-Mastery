@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { COURSE } from '@/lessons/summary';
 import SpotlightCard from '@/components/ui/SpotlightCard';
 
 const SocialProof: React.FC = () => {
@@ -22,9 +23,9 @@ const SocialProof: React.FC = () => {
             spotlightColor="rgba(59, 130, 246, 0.15)"
           >
             <div className="w-20 h-20 bg-gradient-to-br from-accent-blue to-accent-blue/80 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-              <span className="text-white font-bold text-2xl">20</span>
+              <span className="text-white font-bold text-2xl">{COURSE.lessons}</span>
             </div>
-            <h3 className="text-xl font-bold text-text-primary mb-3">bite-sized lessons</h3>
+            <h3 className="text-xl font-bold text-text-primary mb-3">hands-on lessons</h3>
             <p className="text-text-secondary">Perfect for busy schedules</p>
           </SpotlightCard>
 
@@ -37,8 +38,8 @@ const SocialProof: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-text-primary mb-3">2 hours total</h3>
-            <p className="text-text-secondary">Master the terminal in one afternoon</p>
+            <h3 className="text-xl font-bold text-text-primary mb-3">about {COURSE.hours} hours total</h3>
+            <p className="text-text-secondary">10 to 20 minutes a lesson</p>
           </SpotlightCard>
 
           <SpotlightCard

@@ -79,3 +79,48 @@ Built as one finished piece: new look, new layout, working terminal, rewritten c
 **Quiz.** Four questions, including relative vs absolute paths.
 
 **Changes from the old lesson 2:** it adds absolute vs relative paths, `cd` with no argument, `cd -`, tab completion, and error reading. The three practice prompts that matched exact strings are replaced with tasks that check the result.
+
+
+---
+
+## Curriculum v2 (decided 22 Oct 2026)
+
+Tightened from 20 lessons to 13. Topics that need a real machine to mean anything (networking, package managers, archives, tmux/screen) were cut; a final project replaces the old lesson 20.
+
+| # | Lesson | Covers | Replaces |
+|---|---|---|---|
+| 1 | Meet the terminal | whoami, date, echo, errors, Ctrl+C, real terminal | 1 |
+| 2 | Moving around | pwd, ls, cd, paths, Tab | 2 |
+| 3 | Make files and folders | mkdir, touch, cat, > | 3 |
+| 4 | Copy, move and delete | cp, mv, rm, rmdir | 4 |
+| 5 | Read files | cat, head, tail, wc | 6, part of 9 |
+| 6 | Match many files at once | *, ?, [ ] | 10 |
+| 7 | Connect commands | pipes, > and >>, sort, uniq | 16, 9 |
+| 8 | Find anything | grep, find | 7 |
+| 9 | Permissions | ls -l, chmod, running scripts | 5 |
+| 10 | Edit files with nano | nano | 8 |
+| 11 | What's running | ps, kill, df, du | 11, 12 |
+| 12 | Work faster | history, aliases, variables, PATH | 14, 15 |
+| 13 | Final project | everything, on one realistic mess | new |
+
+Total: 168 minutes, so "about 3 hours". The old "under 2 hours" and "20 lessons" claims are gone everywhere. Course size now comes from `src/lessons/summary.ts`, and a test fails if it drifts from the real lessons.
+
+## Status (22 Oct 2026): all 13 lessons on the workbench
+
+Done:
+
+- **Lessons 1–13** in `src/lessons/`, all in the workbench format. The old lesson page, `src/data/lessons.ts` and its components are deleted.
+- **Tests** (`npm test`, 65 passing). Every lesson is played start to finish with a reference solution. The tests also check that no task starts out done, that every example prints exactly what the lesson shows, and that common wrong answers don't pass.
+- **nano** inside the practice terminal: ^O write out, ^X exit with the save prompt, ^K/^U cut and paste, ^C cancel. Every shortcut is also a button, for phones.
+- **Map** now shows files and folders the moment you create or move them.
+- **Typo help**: `whomai` → "Did you mean whoami?"
+- **/lessons** rebuilt in the workbench look, grouped by part, with progress and a resume button.
+- **/completion** rebuilt: certificate, plus a cheat sheet built from every lesson's command list. The PDF library loads only when you download.
+- **Lesson pages** are pre-rendered with their own titles and descriptions, and all 13 are in the sitemap.
+- **Landing**: "Sign up" buttons now go to Lesson 1, because accounts can't work until the backend is rebuilt (BACKLOG.md).
+
+Still to do:
+
+- Landing page redesign, in the Ocean look.
+- Accounts and synced progress (BACKLOG.md). For now, progress lives in the browser.
+- Login, signup, account and reset-password pages still use the old look and the dead backend.

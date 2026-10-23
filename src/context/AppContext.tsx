@@ -1,11 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { UserProgress, Lesson } from '@/types';
+import { UserProgress } from '@/types';
 import { saveToLocalStorage, loadFromLocalStorage, STORAGE_KEYS } from '@/utils';
 import { useAuth } from './AuthContext';
 import { getProgressForUser, markLessonComplete as markLessonCompleteAPI, resetProgressForUser, LessonProgress } from '@/lib/supabase/progress';
-import { lessons as allLessons } from '@/data/lessons';
+import { LESSONS, type Lesson } from '@/lessons';
 
 interface AppState {
   userProgress: UserProgress;
@@ -30,7 +30,7 @@ const initialState: AppState = {
     quizScores: {},
     totalProgress: 0,
   },
-  lessons: allLessons,
+  lessons: LESSONS,
   currentLesson: null,
   isLoading: true,
 };

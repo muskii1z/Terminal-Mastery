@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { LESSONS } from '@/lessons';
 
 interface CertificateProps {
   studentName?: string;
@@ -86,7 +87,7 @@ const Certificate: React.FC<CertificateProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" />
               </svg>
               <span className="text-sm font-medium text-gray-700">
-                Mastered in 2 hours • Terminal fundamentals for developers
+                {LESSONS.length} hands-on lessons • Every command typed and checked
               </span>
             </div>
           </div>

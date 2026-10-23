@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
+import { COURSE, COURSE_LENGTH } from '@/lessons/summary';
 
 const StructuredData: React.FC = () => {
   const courseData = {
     "@context": "https://schema.org",
     "@type": "Course",
-    "name": "Master the Terminal in under 2 Hours",
-    "description": "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
+    "name": "Terminal Mastery: learn the terminal by using it",
+    "description": `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work.`,
     "provider": {
       "@type": "Organization",
       "name": "Terminal Mastery",
@@ -22,7 +23,7 @@ const StructuredData: React.FC = () => {
       }
     },
     "educationalLevel": "Beginner",
-    "timeRequired": "PT2H",
+    "timeRequired": `PT${COURSE.hours}H`,
     "numberOfCredits": 0,
     "coursePrerequisites": "No experience required",
     "offers": {

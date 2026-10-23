@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { COURSE } from '@/lessons/summary';
 
 interface TerminalMockupProps {
   className?: string;
@@ -73,7 +74,7 @@ const TerminalMockup: React.FC<TerminalMockupProps> = ({ className = '' }) => {
         {/* Progress Indicator */}
         <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
           <div style={{ color: 'var(--warning-yellow)' }}>✓</div>
-          <span>Lesson 2/20: Navigation Commands</span>
+          <span>Lesson 2 of {COURSE.lessons}: Moving around</span>
         </div>
       </div>
     </div>

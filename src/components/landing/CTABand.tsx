@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { COURSE } from '@/lessons/summary';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 
@@ -17,9 +18,9 @@ const CTABand: React.FC = () => {
 
       <div className="relative max-w-5xl mx-auto text-center">
         <h2 className="text-4xl md:text-6xl font-bold text-text-primary mb-6 leading-tight">
-          Master the terminal in{' '}
+          Learn the terminal in{' '}
           <span className="bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
-            2 hours
+            {COURSE.lessons} lessons
           </span>
           <br />
           <span className="text-2xl md:text-3xl font-normal text-text-secondary">
@@ -28,13 +29,13 @@ const CTABand: React.FC = () => {
         </h2>
 
         <p className="text-xl text-text-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
-          Twenty short lessons that take you from avoiding the terminal to using it with confidence
+          Short, hands-on lessons that take you from avoiding the terminal to using it with confidence
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8">
-          <Link href="/signup" className="inline-block" scroll={false}>
+          <Link href="/lessons/1" className="inline-block" scroll={false}>
             <Button size="lg" className="text-lg px-10 py-4 shadow-2xl hover:shadow-accent-blue/25 transition-all duration-300 transform hover:scale-105">
-              Sign Up Free
+              Start Lesson 1
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>

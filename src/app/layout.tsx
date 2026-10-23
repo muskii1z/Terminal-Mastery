@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { COURSE_LENGTH } from "@/lessons/summary";
 import { Geist, Geist_Mono, IBM_Plex_Sans, IBM_Plex_Mono, Martian_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
@@ -44,8 +45,8 @@ const martianMono = Martian_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Master the Terminal in under 2 Hours | Terminal Mastery",
-  description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
+  title: "Terminal Mastery: learn the terminal by using it",
+  description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. No account needed.`,
   keywords: "linux terminal, command line, terminal tutorial, bash commands, learn terminal, terminal course, linux commands",
   authors: [{ name: "Terminal Mastery" }],
   creator: "Terminal Mastery",
@@ -63,8 +64,8 @@ export const metadata: Metadata = {
     shortcut: '/favicon.svg'
   },
   openGraph: {
-    title: "Master the Terminal in under 2 Hours",
-    description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
+    title: "Terminal Mastery: learn the terminal by using it",
+    description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. No account needed.`,
     url: SITE_URL,
     siteName: "Terminal Mastery",
     locale: "en_US",
@@ -72,8 +73,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Master the Terminal in under 2 Hours",
-    description: "Beginner-friendly Linux terminal course with 20 bite-sized lessons. Practice commands, take quick quizzes, and track your progress — free.",
+    title: "Terminal Mastery: learn the terminal by using it",
+    description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. No account needed.`,
     creator: "@terminal_mastery",
   },
   robots: {
