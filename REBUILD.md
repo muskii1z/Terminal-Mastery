@@ -119,8 +119,18 @@ Done:
 - **Lesson pages** are pre-rendered with their own titles and descriptions, and all 13 are in the sitemap.
 - **Landing**: "Sign up" buttons now go to Lesson 1, because accounts can't work until the backend is rebuilt (BACKLOG.md).
 
+- **Landing page** rebuilt in the Ocean look (BACKLOG P5-1 to P5-6):
+  - Hero leads with "Even senior engineers wing it in the terminal", the founder's line and name, and **a working practice terminal** visitors can type into.
+  - "Start Lesson 1" is the main button everywhere. No sign-up step.
+  - The curriculum is drawn as a `tree` listing, and every lesson links straight to itself.
+  - "What you leave with" names the certificate and cheat sheet. "Why I built this" tells the founder story.
+  - The FAQ is honest and uses native `<details>`.
+  - 4.4 screens long, down from 7.7. 125 kB first load, down from 159 kB.
+  - The old landing components are deleted. Structured data now comes from the real lessons and author.
+
 Still to do:
 
-- Landing page redesign, in the Ocean look.
+- Author photo (`public/author.jpg`) and social links, in `src/lib/author.ts`.
+- Email capture (BACKLOG P3-1, P3-3). Needs a backend or a mailing-list service.
 - Accounts and synced progress (BACKLOG.md). For now, progress lives in the browser.
 - Login, signup, account and reset-password pages still use the old look and the dead backend.

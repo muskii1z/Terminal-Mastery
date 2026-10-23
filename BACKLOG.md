@@ -118,6 +118,8 @@ P0 Stop the bleeding  →  P1 Live + measured  →  ⚑ SOFT LAUNCH (quiet, coll
 ## P5 — Positioning and polish
 **Do before the hard launch.**
 
+> **Status, 22 Oct 2026:** P5-1, P5-2, P5-3, P5-4, P5-5, P5-6, P5-7 and P5-9 are done (landing page, lesson index and lesson pages rebuilt; see REBUILD.md). P5-1 still needs a real photo at `public/author.jpg` (set it in `src/lib/author.ts`). P5-8 waits on accounts (P1-1).
+
 | ID | Fix | Why | Effort | Decision |
 |---|---|---|---|---|
 | **P5-1** | **Hero = the founder story, with your name and face** | "I could ship projects with AI, but I felt like a fraud when it came to the terminal" is the best sentence on the site, buried in section 6 of 8, signed by a placeholder. It's the one thing no competitor can copy. | 2–3 h | — |

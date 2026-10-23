@@ -1,127 +1,288 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
-import Header from '@/components/layout/Header';
-import Button from '@/components/ui/Button';
-import { COURSE } from '@/lessons/summary';
-import TrustRow from '@/components/landing/TrustRow';
-import SocialProof from '@/components/landing/SocialProof';
-import BenefitsSection from '@/components/landing/BenefitsSection';
-import CurriculumPreview from '@/components/landing/CurriculumPreview';
-import HowItWorks from '@/components/landing/HowItWorks';
-import FounderNote from '@/components/landing/FounderNote';
-import FAQ from '@/components/landing/FAQ';
-import CTABand from '@/components/landing/CTABand';
+import CourseTopbar from '@/components/course/CourseTopbar';
+import HeroTerminal from '@/components/home/HeroTerminal';
 import StructuredData from '@/components/seo/StructuredData';
-import TerminalMockup from '@/components/ui/TerminalMockup';
+import { LESSONS, PARTS } from '@/lessons';
+import { COURSE } from '@/lessons/summary';
+import { AUTHOR, initials } from '@/lib/author';
+import topbar from '@/components/course/course.module.css';
+import s from '@/components/home/home.module.css';
+
+const slug = (part: string) => part.toLowerCase().replace(/\s+/g, '-');
+const two = (n: number) => String(n).padStart(2, '0');
+
+const STEPS = [
+  {
+    title: 'Read one small step',
+    text: 'Each step teaches one command, with the exact output it prints. No walls of text.',
+  },
+  {
+    title: 'Type it yourself',
+    text: 'A practice terminal sits beside every lesson. It behaves like bash on Linux, error messages and all.',
+  },
+  {
+    title: 'It checks your work',
+    text: 'Tasks tick off the moment you do them. No “mark as complete” button, no honour system.',
+  },
+];
+
+const FAQ = [
+  {
+    q: 'Who is this for?',
+    a: 'Anyone who avoids the terminal, or copies commands into it without knowing what they do. Complete beginners are welcome. So are developers who never properly learned it.',
+  },
+  {
+    q: 'Do I need to install anything?',
+    a: 'No. The practice terminal runs in your browser, and nothing you type can touch your computer. Lesson 1 shows you how to open the real terminal on Mac, Linux or Windows when you’re ready.',
+  },
+  {
+    q: 'Mac, Windows or Linux?',
+    a: 'The commands work on Mac and Linux, and the lessons point out where a Mac behaves differently. On Windows, you install WSL, which gives you a real Linux terminal. Lesson 1 walks you through it.',
+  },
+  {
+    q: 'How long does it take?',
+    a: `About ${COURSE.hours} hours for all ${COURSE.lessons} lessons, at 10 to 20 minutes each. Your progress is saved in your browser, so stop whenever you like.`,
+  },
+  {
+    q: 'Is it really free?',
+    a: 'Yes. Every lesson, the certificate and the cheat sheet are free, and you don’t need an account.',
+  },
+  {
+    q: 'Will it teach me Git, Docker or deploying?',
+    a: 'Not directly. Those tools all run in the terminal, and this course teaches the ground they stand on: moving around, files, searching, pipes, permissions, editing and processes. Once that clicks, their tutorials stop looking like magic spells.',
+  },
+];
+
+function Avatar({ size }: { size: 'small' | 'large' }) {
+  const className = size === 'large' ? s.avatarLarge : s.avatar;
+  return AUTHOR.photo ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={AUTHOR.photo} alt={AUTHOR.name} className={className} />
+  ) : (
+    <span className={className} aria-hidden="true">
+      {initials(AUTHOR.name)}
+    </span>
+  );
+}
 
 export default function Home() {
+  const links = Object.entries(AUTHOR.links).filter(([, url]) => url);
+
   return (
-    <>
+    <div className={s.root}>
       <StructuredData />
-      <Header />
-      <div className="min-h-screen pt-24">
-        {/* Hero Section */}
-        <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-          {/* Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-bg-primary via-bg-secondary to-bg-tertiary"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/5 to-accent-purple/5"></div>
+      <a href="#main" className={s.skip}>
+        Skip to content
+      </a>
+      <CourseTopbar>
+        <Link href="/lessons" className={topbar.topbarLink}>
+          Lessons
+        </Link>
+      </CourseTopbar>
 
-          <div className="relative max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left Column - Content */}
-              <div className="text-center lg:text-left">
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-text-primary mb-6 leading-tight">
-                  Learn the terminal{' '}
-                  <span className="bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
-                    by using it
-                  </span>
-                </h1>
+      <main id="main">
+        {/* ── Hero: the hook, the person, and the proof ─────────────── */}
+        <section className={s.hero} aria-labelledby="hero-title">
+          <div className={s.heroCopy}>
+            <p className={s.eyebrow}>
+              <span className={s.prompt}>$</span> a free course · {COURSE.lessons} lessons · about {COURSE.hours} hours
+            </p>
+            <h1 id="hero-title" className={s.title}>
+              Even senior engineers wing it in the terminal.
+            </h1>
+            <p className={s.lede}>
+              You don’t have to. Learn it properly in {COURSE.lessons} short lessons, typing every command into a
+              practice terminal that checks your work. Free, and no account needed.
+            </p>
 
-                <p className="text-xl text-text-secondary mb-8 max-w-2xl lg:max-w-none leading-relaxed">
-                  {COURSE.lessons} hands-on lessons, about {COURSE.hours} hours in total.{' '}
-                  <span className="text-accent-blue font-medium">Type every command into a practice terminal that checks your work.</span>
-                </p>
+            <div className={s.actions}>
+              <Link href="/lessons/1" className={s.primary}>
+                Start Lesson 1 <span aria-hidden="true">→</span>
+              </Link>
+              <Link href="/lessons" className={s.secondary}>
+                See all {COURSE.lessons} lessons
+              </Link>
+            </div>
 
-                {/* Primary CTA */}
-                <div className="mb-8">
-                  <Link href="/lessons/1" className="inline-block" scroll={false}>
-                    <Button size="lg" className="text-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                      Start Lesson 1
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </Button>
-                  </Link>
-                </div>
-
-                {/* Trust Row */}
-                <TrustRow />
-
-                {/* Secondary CTA */}
-                <div className="mt-6">
-                  <Link href="/lessons" className="inline-flex items-center text-accent-blue hover:text-accent-purple transition-colors" scroll={false}>
-                    <span className="text-sm font-medium">Browse all {COURSE.lessons} lessons</span>
-                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </div>
+            <figure className={s.quote}>
+              <Avatar size="small" />
+              <div>
+                <blockquote>
+                  “I could ship projects with AI, but I felt like a fraud in the terminal. So I built the course I wish
+                  I’d had.”
+                </blockquote>
+                <figcaption>{AUTHOR.name}, who made Terminal Mastery</figcaption>
               </div>
+            </figure>
+          </div>
 
-              {/* Right Column - Terminal Mockup */}
-              <div className="relative">
-                <div className="relative z-10">
-                  <TerminalMockup className="w-full max-w-lg mx-auto lg:max-w-none" />
+          <HeroTerminal />
+        </section>
+
+        {/* ── How a lesson works ─────────────────────────────────────── */}
+        <section className={s.band} aria-labelledby="how-title">
+          <div className={s.inner}>
+            <h2 id="how-title" className={s.heading}>
+              How every lesson works
+            </h2>
+            <ol className={s.steps}>
+              {STEPS.map((step, i) => (
+                <li key={step.title} className={s.step}>
+                  <span className={s.stepNumber}>{two(i + 1)}</span>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* ── The curriculum, drawn the way `tree` draws it ──────────── */}
+        <section className={s.section} aria-labelledby="course-title">
+          <div className={s.inner}>
+            <h2 id="course-title" className={s.heading}>
+              From your first command to cleaning up a real project
+            </h2>
+            <p className={s.sub}>
+              {COURSE.lessons} lessons in five parts. Each one builds on the last, and the final project uses all of
+              them. Jump into any lesson.
+            </p>
+
+            <div className={s.tree} role="list" aria-label="All lessons">
+              <div className={s.treeRoot} aria-hidden="true">
+                ~/terminal-mastery
+              </div>
+              {PARTS.map((part, p) => {
+                const lastPart = p === PARTS.length - 1;
+                const inPart = LESSONS.filter((l) => l.part === part);
+                return (
+                  <div key={part} role="listitem" className={s.treePart}>
+                    <div className={s.treeDir}>
+                      <span className={s.branch} aria-hidden="true">
+                        {lastPart ? '└── ' : '├── '}
+                      </span>
+                      {slug(part)}/
+                    </div>
+                    <ul className={s.treeLessons}>
+                      {inPart.map((lesson, i) => (
+                        <li key={lesson.id}>
+                          <Link href={`/lessons/${lesson.id}`} className={s.treeLesson}>
+                            <span className={s.branch} aria-hidden="true">
+                              {lastPart ? '    ' : '│   '}
+                              {i === inPart.length - 1 ? '└── ' : '├── '}
+                            </span>
+                            <span className={s.treeNumber}>{two(lesson.number)}</span>
+                            <span className={s.treeTitle}>{lesson.title}</span>
+                            <span className={s.treeCommands}>
+                              {lesson.commands
+                                .slice(0, 4)
+                                .map((c) => c.name)
+                                .join('  ')}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ── What you leave with, and who made it ───────────────────── */}
+        <section className={s.band} aria-labelledby="finish-title">
+          <div className={`${s.inner} ${s.split}`}>
+            <div>
+              <h2 id="finish-title" className={s.heading}>
+                What you leave with
+              </h2>
+              <ul className={s.gets}>
+                <li>
+                  <h3>The habit, not just the facts</h3>
+                  <p>You’ll have typed every command yourself, and fixed your own mistakes along the way.</p>
+                </li>
+                <li>
+                  <h3>A certificate with your name on it</h3>
+                  <p>Earned by finishing all {COURSE.lessons} lessons, every task checked. Download it as a PDF.</p>
+                </li>
+                <li>
+                  <h3>A one-page cheat sheet</h3>
+                  <p>Every command from the course, to keep next to your keyboard.</p>
+                </li>
+              </ul>
+            </div>
+
+            <div className={s.founder}>
+              <h2 className={s.heading}>Why I built this</h2>
+              <div className={s.founderBody}>
+                <Avatar size="large" />
+                <div>
+                  <p>
+                    I got into AI without a technical background. I could ship projects, but the terminal was a
+                    black box I typed into and hoped. So I built this course to learn it properly myself.
+                  </p>
+                  <p>
+                    Then I started asking my peers, and found I wasn’t alone. Plenty of people who write code every
+                    day, senior engineers included, never really learned it either.
+                  </p>
+                  <p className={s.signature}>{AUTHOR.name}</p>
+                  {links.length > 0 && (
+                    <p className={s.links}>
+                      {links.map(([name, url]) => (
+                        <a key={name} href={url} target="_blank" rel="noopener noreferrer">
+                          {name === 'linkedin' ? 'LinkedIn' : name === 'youtube' ? 'YouTube' : 'GitHub'}
+                        </a>
+                      ))}
+                    </p>
+                  )}
                 </div>
-
-                {/* Floating Elements */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-accent-blue/20 rounded-full blur-xl"></div>
-                <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-accent-purple/20 rounded-full blur-xl"></div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Social Proof / Fast Facts */}
-        <SocialProof />
-
-        {/* Benefits Section */}
-        <BenefitsSection />
-
-        {/* Curriculum Preview */}
-        <CurriculumPreview />
-
-        {/* How it Works */}
-        <HowItWorks />
-
-        {/* Founder Note */}
-        <FounderNote />
-
-        {/* FAQ */}
-        <FAQ />
-
-        {/* Final CTA Band */}
-        <CTABand />
-
-        {/* Footer */}
-        <footer className="border-t border-border-primary py-8 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <p className="text-text-muted text-sm mb-4">
-              © {new Date().getFullYear()} Terminal Mastery. Built for developers who want to master the command line.
-            </p>
-            <div className="flex justify-center space-x-6 text-sm">
-              <Link href="/privacy" className="text-text-secondary hover:text-text-primary transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-text-secondary hover:text-text-primary transition-colors">
-                Terms of Service
-              </Link>
+        {/* ── Questions ──────────────────────────────────────────────── */}
+        <section className={s.section} aria-labelledby="faq-title">
+          <div className={`${s.inner} ${s.narrow}`}>
+            <h2 id="faq-title" className={s.heading}>
+              Questions
+            </h2>
+            <div className={s.faq}>
+              {FAQ.map((item) => (
+                <details key={item.q} className={s.faqItem}>
+                  <summary>{item.q}</summary>
+                  <p>{item.a}</p>
+                </details>
+              ))}
             </div>
           </div>
-        </footer>
-      </div>
-    </>
+        </section>
+
+        {/* ── Last word ──────────────────────────────────────────────── */}
+        <section className={s.final} aria-labelledby="final-title">
+          <p className={s.finalPrompt} aria-hidden="true">
+            you@terminal-mastery:~$ <span className={s.cursor} />
+          </p>
+          <h2 id="final-title" className={s.finalTitle}>
+            Your first command is one click away.
+          </h2>
+          <Link href="/lessons/1" className={s.primary}>
+            Start Lesson 1 <span aria-hidden="true">→</span>
+          </Link>
+        </section>
+      </main>
+
+      <footer className={s.footer}>
+        <span>
+          © {new Date().getFullYear()} Terminal Mastery · made by {AUTHOR.name}
+        </span>
+        <nav aria-label="Footer">
+          <Link href="/lessons">Lessons</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+        </nav>
+      </footer>
+    </div>
   );
 }
