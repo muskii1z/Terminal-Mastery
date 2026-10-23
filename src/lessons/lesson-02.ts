@@ -6,6 +6,13 @@ const lesson: Lesson = {
   title: 'Moving around',
   promise: 'Find out where you are, see what’s around you, and get anywhere on the system.',
   minutes: 12,
+  part: 'Getting started',
+  commands: [
+    { name: 'pwd', does: 'Print the folder you’re in' },
+    { name: 'ls', does: 'List what’s in a folder (-a hidden files, -l details)' },
+    { name: 'cd', does: 'Change folder (.. up, ~ home, - back)' },
+    { name: 'Tab', does: 'Complete a file or folder name' },
+  ],
 
   fs: {
     home: {
@@ -257,7 +264,7 @@ const lesson: Lesson = {
           type: 'p',
           text: '`cd -` jumps back to the folder you were in before, like a back button. Unlike most `cd` commands, it prints the folder it took you to.',
         },
-        { type: 'example', command: 'cd -', output: '/tmp' },
+        { type: 'example', command: 'cd -', output: '/tmp', context: true },
       ],
       tasks: [
         {
@@ -376,7 +383,7 @@ const lesson: Lesson = {
     },
   ],
 
-  next: { id: '3', title: 'Working with files' },
+  next: { id: '3', title: 'Make files and folders' },
 };
 
 export default lesson;

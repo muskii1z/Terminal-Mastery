@@ -1,4 +1,5 @@
-import type { FsSeed } from '@/lib/shell/fs';
+import type { FsMeta, FsSeed } from '@/lib/shell/fs';
+import type { Proc } from '@/lib/shell/shell';
 import type { Check } from '@/lib/shell/checks';
 import type { QuizQuestion } from '@/types';
 
@@ -11,8 +12,12 @@ import type { QuizQuestion } from '@/types';
 export type Block =
   | { type: 'p'; text: string }
   | { type: 'list'; items: string[] }
-  /** A command and what it prints, shown as a small terminal snippet. */
-  | { type: 'example'; command: string; output?: string }
+  /**
+   * A command and what it prints, shown as a small terminal snippet. Tests run
+   * every example in a fresh practice terminal and check the output matches;
+   * `context` marks one whose output depends on earlier steps or on the time it runs.
+   */
+  | { type: 'example'; command: string; output?: string; context?: true }
   /** The terminal prompt on its own, coloured as the practice terminal shows it. */
   | { type: 'prompt'; path?: string }
   /** A side note. `platform` is for real Mac/Linux differences. */
@@ -34,6 +39,8 @@ export interface Section {
   tasks: Task[];
 }
 
+export type Part = 'Getting started' | 'Working with files' | 'Power tools' | 'Your system' | 'Final project';
+
 export interface Lesson {
   id: string;
   number: number;
@@ -41,7 +48,15 @@ export interface Lesson {
   /** One line under the title: what you'll be able to do afterwards. */
   promise: string;
   minutes: number;
+  /** Which part of the course it belongs to, for the lesson list. */
+  part: Part;
+  /** The commands it teaches, for the lesson list and the cheat sheet. */
+  commands: Array<{ name: string; does: string }>;
   fs: FsSeed;
+  /** Permissions, owners and sizes for particular files. */
+  fsMeta?: FsMeta;
+  /** Processes running when the lesson starts, for lessons about processes. */
+  procs?: Proc[];
   sections: Section[];
   quiz: QuizQuestion[];
   next?: { id: string; title: string };

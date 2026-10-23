@@ -6,6 +6,14 @@ const lesson: Lesson = {
   title: 'Meet the terminal',
   promise: 'Read the prompt, run your first commands, and open the terminal on your own computer.',
   minutes: 10,
+  part: 'Getting started',
+  commands: [
+    { name: 'whoami', does: 'Print the user you’re logged in as' },
+    { name: 'date', does: 'Print the date and time' },
+    { name: 'echo', does: 'Print its arguments back' },
+    { name: 'clear', does: 'Clear the screen (or Ctrl+L)' },
+    { name: 'Ctrl+C', does: 'Cancel the current line or stop a running program' },
+  ],
 
   fs: {
     home: {
@@ -84,7 +92,7 @@ const lesson: Lesson = {
           type: 'p',
           text: 'A command is the name of a program, usually short. Type it, press [[Enter]], and the program runs and prints its result.',
         },
-        { type: 'example', command: 'date' },
+        { type: 'example', command: 'date', output: 'Thu Oct 22 14:03:22 UTC 2026', context: true },
         {
           type: 'p',
           text: '`date` prints today’s date and the current time. Run it and you’ll see the real time right now.',
