@@ -1,0 +1,58 @@
+/*
+ * Ocean blue: the course's colours, named by role so a palette swap is one
+ * edit. Shared by every rebuilt screen through `composes: ocean`.
+ */
+
+.ocean {
+  --canvas: #f1f5f9;
+  --pane: #ffffff;
+  --ink: #0f172a;
+  --ink-2: #475569;
+  --ink-3: #64748b;
+  --rule: #e2e8f0;
+  --code-bg: #f1f5f9;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-ink: #1d4ed8;
+  --accent-wash: #e3edfd;
+  --on-accent: #ffffff;
+  --done: #16a34a;
+  --done-wash: #e7f6ec;
+  --coral: #dc2626;
+  --coral-wash: #fdecec;
+
+  /* The terminal side stays dark in both themes. */
+  --machine: #060a13;
+  --term: #0b1220;
+  --term-head: #111a2c;
+  --term-rule: #1e293b;
+  --term-text: #e2e8f0;
+  --term-dim: #7c8ba1;
+  --term-prompt: #38bdf8;
+  --term-dir: #93c5fd;
+  --term-exec: #86efac;
+  --term-err: #f87171;
+
+  --sans: var(--font-plex-sans), system-ui, sans-serif;
+  --mono: var(--font-plex-mono), ui-monospace, monospace;
+  --display: var(--font-martian), var(--font-plex-mono), ui-monospace, monospace;
+}
+
+:global([data-theme='dark']) .ocean {
+  --canvas: #060a13;
+  --pane: #0f172a;
+  --ink: #e2e8f0;
+  --ink-2: #94a3b8;
+  --ink-3: #7c8ba1;
+  --rule: #1e293b;
+  --code-bg: #1e293b;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-ink: #93c5fd;
+  --accent-wash: #172554;
+  --done: #22c55e;
+  --done-wash: #0b2a17;
+  --coral: #f87171;
+  --coral-wash: #2a1215;
+  --machine: #03060d;
+}

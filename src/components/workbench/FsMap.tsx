@@ -19,8 +19,8 @@ interface Row {
  * The file system as the learner has discovered it, drawn the way `tree` does.
  *
  * It starts nearly empty: you only see the path to where you're standing.
- * `ls` reveals a folder's contents, `ls -a` its hidden files, and `cd` adds
- * wherever you go. The map is the lesson's mental model made visible.
+ * `ls` reveals a folder's contents, `ls -a` its hidden files, `cd` adds
+ * wherever you go, and anything you create appears as you make it. The map is the lesson's mental model made visible.
  */
 function buildRows(shell: Shell): Row[] {
   const known = new Set<string>();
@@ -33,6 +33,8 @@ function buildRows(shell: Shell): Row[] {
   remember(shell.cwd);
   shell.visited.forEach(remember);
   shell.explored.forEach(remember);
+  // Anything you made or moved shows up straight away: you know it's there.
+  shell.created.forEach(remember);
 
   const rows: Row[] = [];
 
@@ -45,8 +47,7 @@ function buildRows(shell: Shell): Row[] {
     const names = sortNames([...node.children.keys()]).filter((name) => {
       if (name.startsWith('.') && !showHidden) return false;
       if (explored) return true;
-      const child = node.children.get(name)!;
-      return child.kind === 'dir' && known.has(childPath(abs, name));
+      return known.has(childPath(abs, name));
     });
 
     names.forEach((name, i) => {

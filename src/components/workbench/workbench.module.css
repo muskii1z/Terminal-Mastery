@@ -7,40 +7,7 @@
  */
 
 .root {
-  /* Ocean blue. Page colours are named by role, so a palette swap is one edit. */
-  --canvas: #f1f5f9;
-  --pane: #ffffff;
-  --ink: #0f172a;
-  --ink-2: #475569;
-  --ink-3: #64748b;
-  --rule: #e2e8f0;
-  --code-bg: #f1f5f9;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-ink: #1d4ed8;
-  --accent-wash: #e3edfd;
-  --on-accent: #ffffff;
-  --done: #16a34a;
-  --done-wash: #e7f6ec;
-  --coral: #dc2626;
-  --coral-wash: #fdecec;
-
-  /* The terminal side stays dark in both themes. */
-  --machine: #060a13;
-  --term: #0b1220;
-  --term-head: #111a2c;
-  --term-rule: #1e293b;
-  --term-text: #e2e8f0;
-  --term-dim: #7c8ba1;
-  --term-prompt: #38bdf8;
-  --term-dir: #93c5fd;
-  --term-exec: #86efac;
-  --term-err: #f87171;
-
-  --sans: var(--font-plex-sans), system-ui, sans-serif;
-  --mono: var(--font-plex-mono), ui-monospace, monospace;
-  --display: var(--font-martian), var(--font-plex-mono), ui-monospace, monospace;
-
+  composes: ocean from '../../styles/ocean.module.css';
   position: fixed;
   inset: 0;
   z-index: 10;
@@ -50,25 +17,6 @@
   color: var(--ink);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
-}
-
-:global([data-theme='dark']) .root {
-  --canvas: #060a13;
-  --pane: #0f172a;
-  --ink: #e2e8f0;
-  --ink-2: #94a3b8;
-  --ink-3: #7c8ba1;
-  --rule: #1e293b;
-  --code-bg: #1e293b;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-ink: #93c5fd;
-  --accent-wash: #172554;
-  --done: #22c55e;
-  --done-wash: #0b2a17;
-  --coral: #f87171;
-  --coral-wash: #2a1215;
-  --machine: #03060d;
 }
 
 /* globals.css transitions colour on every element; that makes theme changes
@@ -799,6 +747,8 @@
 .t-exec { color: var(--term-exec); }
 .t-error { color: var(--term-err); }
 .t-muted { color: var(--term-dim); }
+.t-match { color: var(--term-err); font-weight: 700; }
+.t-num { color: var(--term-exec); }
 
 .inputRow {
   display: flex;
@@ -817,6 +767,107 @@
   padding: 0;
 }
 .input:focus-visible { outline: none; }
+
+/* ── nano: takes over the terminal panel, like the real one ─ */
+
+.nano {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--term-text);
+}
+.nanoTitle {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  white-space: nowrap;
+  padding: 2px 12px;
+  background: var(--term-text);
+  color: var(--term);
+  font-size: 14px;
+}
+.nanoTitle > :last-child { text-align: right; }
+.nanoFile { font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.nanoText {
+  flex: 1;
+  min-height: 120px;
+  resize: none;
+  border: 0;
+  outline: none;
+  padding: 10px 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  caret-color: var(--term-prompt);
+  white-space: pre;
+  overflow: auto;
+}
+.nanoText:focus-visible { outline: none; }
+.nanoStatus {
+  min-height: 1.6em;
+  padding: 0 12px;
+  text-align: center;
+}
+.nanoMessage {
+  background: var(--term-text);
+  color: var(--term);
+  padding: 0 6px;
+}
+.nanoAsk {
+  display: flex;
+  gap: 8px;
+  text-align: left;
+  background: var(--term-text);
+  color: var(--term);
+  padding: 0 6px;
+  outline: none;
+}
+.nanoAsk input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+}
+.nanoKeys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 10px 10px;
+  border-top: 1px solid var(--term-rule);
+}
+.nanoKey {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 4px 12px 4px 4px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--term-text);
+  background: var(--term-head);
+  border: 1px solid var(--term-rule);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.nanoKey:hover { border-color: var(--term-dim); }
+.nanoKey kbd {
+  font: inherit;
+  font-weight: 600;
+  min-width: 34px;
+  padding: 3px 6px;
+  text-align: center;
+  border-radius: 5px;
+  background: var(--term-text);
+  color: var(--term);
+}
 
 /* ── Small screens: one half at a time ───────────────────── */
 
@@ -857,6 +908,8 @@
 
 @media (max-width: 420px) {
   .mapCaption { display: none; }
+  .nanoTitle { grid-template-columns: 0 1fr auto; gap: 0 8px; }
+  .nanoTitle > :first-child { visibility: hidden; }
 }
 
 @media (prefers-reduced-motion: reduce) {

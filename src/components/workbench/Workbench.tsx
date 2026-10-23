@@ -11,6 +11,7 @@ import { track } from '@/lib/analytics/posthog';
 import Book, { type QuizState, type TaskState } from './Book';
 import Terminal from './Terminal';
 import FsMap from './FsMap';
+import Nano from './Nano';
 import s from './workbench.module.css';
 
 const WELCOME: Line[] = [
@@ -49,7 +50,7 @@ function save(id: string, data: Saved) {
 
 export default function Workbench({ lesson }: { lesson: Lesson }) {
   const shellRef = useRef<Shell | null>(null);
-  if (!shellRef.current) shellRef.current = new Shell({ seed: lesson.fs });
+  if (!shellRef.current) shellRef.current = new Shell({ seed: lesson.fs, meta: lesson.fsMeta, procs: lesson.procs });
   const shell = shellRef.current;
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -63,6 +64,7 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
   const [furthest, setFurthest] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [view, setView] = useState<'book' | 'machine'>('book');
+  const [editor, setEditor] = useState<{ key: number; name: string; content: string; isNew: boolean } | null>(null);
 
   const { completeLesson } = useAppContext();
   const { theme, toggleTheme } = useTheme();
@@ -115,7 +117,25 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
     const result = shell.run(raw, { usedTab });
     setLines((prev) => (result.clear ? [] : [...prev, echo, ...result.lines]));
     setVersion((v) => v + 1);
+    if (result.editor) {
+      const { path, content, isNew } = result.editor;
+      // nano shows the name the way you typed it, relative to where you are.
+      const name = path.startsWith(shell.cwd + '/') ? path.slice(shell.cwd.length + 1) : shell.displayPath(path);
+      setEditor({ key: Date.now(), name, content, isNew });
+    }
     evaluate();
+  };
+
+  const writeFromEditor = (name: string, content: string) => {
+    const error = shell.saveFromEditor(shell.resolve(name), content);
+    setVersion((v) => v + 1);
+    evaluate();
+    return error;
+  };
+
+  const closeEditor = () => {
+    setEditor(null);
+    setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   const interrupt = (partial: string) => {
@@ -133,6 +153,7 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
   };
 
   const reset = () => {
+    setEditor(null);
     shell.reset();
     setLines([...WELCOME, [{ text: 'Files reset to how they started.', tone: 'muted' }], []]);
     setVersion((v) => v + 1);
@@ -288,6 +309,18 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
             onPrint={(extra) => setLines((prev) => [...prev, ...extra])}
             onInterrupt={interrupt}
             onReset={reset}
+            editor={
+              editor && (
+                <Nano
+                  key={editor.key}
+                  name={editor.name}
+                  content={editor.content}
+                  isNew={editor.isNew}
+                  onWrite={writeFromEditor}
+                  onExit={closeEditor}
+                />
+              )
+            }
           />
         </div>
       </main>

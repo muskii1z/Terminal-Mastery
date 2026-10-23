@@ -12,6 +12,8 @@ interface TerminalProps {
   onPrint: (lines: Line[]) => void;
   onInterrupt: (partial: string) => void;
   onReset: () => void;
+  /** An open editor (nano) takes over the panel, as it takes over a real terminal. */
+  editor?: React.ReactNode;
 }
 
 export function renderLine(line: Line, key: React.Key) {
@@ -26,7 +28,7 @@ export function renderLine(line: Line, key: React.Key) {
   );
 }
 
-export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onInterrupt, onReset }: TerminalProps) {
+export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onInterrupt, onReset, editor }: TerminalProps) {
   const [value, setValue] = useState('');
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const usedTab = useRef(false);
@@ -62,7 +64,7 @@ export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onInt
     }
 
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-      const past = shell.events.filter((e) => e.command !== '^C').map((e) => e.raw);
+      const past = shell.events.filter((e) => e.command !== '^C' && !e.raw.startsWith('(saved ')).map((e) => e.raw);
       if (!past.length) return;
       event.preventDefault();
       const start = historyIndex ?? past.length;
@@ -103,11 +105,12 @@ export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onInt
   return (
     <section className={`${s.panel} ${s.terminal}`} aria-label="Practice terminal">
       <div className={s.panelHead}>
-        <span>terminal</span>
+        <span>{editor ? 'terminal · nano' : 'terminal'}</span>
         <button type="button" className={s.panelButton} onClick={onReset}>
           Reset files
         </button>
       </div>
+      {editor ?? (
       <div className={s.termBody} ref={bodyRef} onClick={focusInput}>
         <div role="log" aria-live="polite">
           {lines.map((line, i) => renderLine(line, i))}
@@ -137,6 +140,7 @@ export default function Terminal({ shell, lines, inputRef, onRun, onPrint, onInt
           />
         </div>
       </div>
+      )}
     </section>
   );
 }
