@@ -6,12 +6,26 @@ import { getSupabase } from '@/lib/supabase/lazy';
 import { track } from '@/lib/analytics/posthog';
 import type { User } from '@/types';
 
-/** Sign-in providers switched on in Supabase. Set NEXT_PUBLIC_AUTH_PROVIDERS, e.g. "google,github". */
+/** Quick sign-in options, in the order their buttons appear. */
 export type Provider = 'google' | 'github';
-export const PROVIDERS: Provider[] = (process.env.NEXT_PUBLIC_AUTH_PROVIDERS ?? '')
-  .split(',')
-  .map((p) => p.trim())
-  .filter((p): p is Provider => p === 'google' || p === 'github');
+const ALL_PROVIDERS: Provider[] = ['google', 'github'];
+
+let enabledProviders: Promise<Provider[]> | null = null;
+
+/**
+ * The quick sign-in options actually switched on in Supabase. Asking Supabase,
+ * rather than trusting a setting here, means a button never leads to its
+ * "provider is not enabled" error page.
+ */
+export function getEnabledProviders(): Promise<Provider[]> {
+  enabledProviders ??= fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/settings`, {
+    headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '' },
+  })
+    .then((response) => (response.ok ? response.json() : { external: {} }))
+    .then((settings: { external?: Record<string, boolean> }) => ALL_PROVIDERS.filter((p) => settings.external?.[p]))
+    .catch(() => []);
+  return enabledProviders;
+}
 
 interface AuthContextValue {
   user: User | null;

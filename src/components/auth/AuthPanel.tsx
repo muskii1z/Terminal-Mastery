@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { PROVIDERS, useAuth, type Provider } from '@/context/AuthContext';
+import React, { useEffect, useState } from 'react';
+import { getEnabledProviders, useAuth, type Provider } from '@/context/AuthContext';
 import s from './auth.module.css';
 
 type Mode = 'signup' | 'login' | 'forgot';
@@ -29,6 +29,8 @@ function explain(message: string): string {
     return 'Too many attempts in a short time. Wait a few minutes, then try again.';
   if (m.includes('password should be at least')) return 'Use a password of at least 6 characters.';
   if (m.includes('unable to validate email') || m.includes('invalid email')) return 'That doesn’t look like an email address.';
+  if (m.includes('provider is not enabled') || m.includes('unsupported provider'))
+    return 'That sign-in option isn’t switched on yet. Use your email for now.';
   if (m.includes('fetch')) return 'Couldn’t reach the server. Check your connection and try again.';
   return message;
 }
@@ -43,6 +45,11 @@ export default function AuthPanel({ initialMode = 'signup', next, title, lede, i
   /** After sign-up or a reset request: an email is on its way. */
   const [sent, setSent] = useState<'confirm' | 'reset' | null>(null);
   const [resent, setResent] = useState(false);
+  const [providers, setProviders] = useState<Provider[]>([]);
+
+  useEffect(() => {
+    getEnabledProviders().then(setProviders);
+  }, []);
 
   const switchTo = (next: Mode) => {
     setMode(next);
@@ -132,10 +139,10 @@ export default function AuthPanel({ initialMode = 'signup', next, title, lede, i
       {lede && mode !== 'forgot' && <div className={s.lede}>{lede}</div>}
       {mode === 'forgot' && <p className={s.lede}>Enter your email and we’ll send you a link to choose a new one.</p>}
 
-      {mode !== 'forgot' && PROVIDERS.length > 0 && (
+      {mode !== 'forgot' && providers.length > 0 && (
         <>
           <div className={s.providers}>
-            {PROVIDERS.map((provider) => (
+            {providers.map((provider) => (
               <button key={provider} type="button" className={s.provider} onClick={() => withProvider(provider)}>
                 Continue with {PROVIDER_NAMES[provider]}
               </button>
