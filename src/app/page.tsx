@@ -41,11 +41,11 @@ const FAQ = [
   },
   {
     q: 'How long does it take?',
-    a: `About ${COURSE.hours} hours for all ${COURSE.lessons} lessons, at 10 to 20 minutes each. Your progress is saved in your browser, so stop whenever you like.`,
+    a: `About ${COURSE.hours} hours for all ${COURSE.lessons} lessons, at 10 to 20 minutes each. Your progress saves to your account as you go, so stop whenever you like.`,
   },
   {
     q: 'Is it really free?',
-    a: 'Yes. Every lesson, the certificate and the cheat sheet are free, and you don’t need an account.',
+    a: 'Yes. Every lesson, the certificate and the cheat sheet are free. Try lesson 1 without signing up; after that, a free account saves your progress so you can pick up on any device.',
   },
   {
     q: 'Will it teach me Git, Docker or deploying?',
@@ -92,7 +92,7 @@ export default function Home() {
             </h1>
             <p className={s.lede}>
               You don’t have to. Learn it properly in {COURSE.lessons} short lessons, typing every command into a
-              practice terminal that checks your work. Free, and no account needed.
+              practice terminal that checks your work. Free, and lesson 1 needs no sign-up.
             </p>
 
             <div className={s.actions}>

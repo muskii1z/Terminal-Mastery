@@ -1,11 +1,12 @@
 import React from 'react';
-import Header from '@/components/layout/Header';
+import CourseTopbar from '@/components/course/CourseTopbar';
+import course from '@/components/course/course.module.css';
 
 export default function TermsPage() {
   return (
-    <>
-      <Header />
-      <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className={course.root}>
+      <CourseTopbar />
+      <div className="pt-12 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-text-primary mb-8">Terms of Service</h1>
           <div className="prose prose-gray max-w-none">
@@ -88,6 +89,6 @@ export default function TermsPage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

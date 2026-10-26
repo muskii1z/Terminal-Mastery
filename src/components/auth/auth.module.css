@@ -1,0 +1,121 @@
+/*
+ * The sign-in / sign-up panel. Uses the Ocean tokens from whichever page it
+ * sits in (the lesson screen or a course page).
+ */
+
+.panel {
+  width: 100%;
+  max-width: 440px;
+  padding: 36px;
+  background: var(--pane);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px -24px rgb(15 23 42 / 0.35);
+  font-family: var(--sans);
+}
+.title {
+  font-family: var(--display);
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+.lede { font-size: 16px; line-height: 1.6; color: var(--ink-2); margin: 0 0 24px; }
+.lede p { margin: 0 0 8px; }
+.small { font-size: 14px; color: var(--ink-3); margin: 0; }
+
+.providers { display: grid; gap: 10px; }
+.provider {
+  min-height: 50px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--pane);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.provider:hover { border-color: var(--ink-3); }
+.or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.or::before,
+.or::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+.form { display: grid; gap: 16px; }
+.field { display: grid; gap: 6px; font-size: 15px; font-weight: 600; }
+.labelRow { display: flex; justify-content: space-between; align-items: baseline; }
+.field input {
+  font: inherit;
+  font-size: 17px;
+  font-weight: 400;
+  padding: 12px 14px;
+  min-height: 50px;
+  color: var(--ink);
+  background: var(--canvas);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+.field input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+
+.primary {
+  min-height: 54px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.primary:hover { background: var(--accent-hover); }
+.primary:disabled { opacity: 0.6; cursor: progress; }
+.secondary {
+  min-height: 46px;
+  padding: 10px 18px;
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--pane);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.secondary:disabled { color: var(--done); cursor: default; }
+.link {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent-ink);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 20px; }
+.switch { margin: 22px 0 0; font-size: 15px; color: var(--ink-2); text-align: center; }
+.error {
+  margin: 0;
+  padding: 12px 14px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--coral);
+  background: var(--coral-wash);
+  border-radius: 10px;
+}
+
+@media (max-width: 480px) {
+  .panel { padding: 24px 20px; border-radius: 14px; }
+}

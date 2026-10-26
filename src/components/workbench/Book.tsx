@@ -295,7 +295,15 @@ export default function Book(props: BookProps) {
               {finished ? (
                 <>
                   <h2 className={s.finishTitle}>Lesson {pad(lesson.number)} complete</h2>
-                  <p className={s.noteText}>You can find out where you are, see what’s there, and get anywhere on the system.</p>
+                  <p className={s.noteText}>
+                    You used {lesson.commands.map((c, i) => (
+                      <React.Fragment key={c.name}>
+                        {i > 0 && (i === lesson.commands.length - 1 ? ' and ' : ', ')}
+                        <code className={s.code}>{c.name}</code>
+                      </React.Fragment>
+                    ))}
+                    . Every one of them works the same on your own computer.
+                  </p>
                   <div className={s.finishActions}>
                     {lesson.next && (
                       <Link href={`/lessons/${lesson.next.id}`} className={s.primary}>Next: {lesson.next.title}</Link>

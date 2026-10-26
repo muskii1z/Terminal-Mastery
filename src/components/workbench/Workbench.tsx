@@ -5,13 +5,16 @@ import Link from 'next/link';
 import type { Lesson } from '@/lessons/types';
 import { Shell, type Line } from '@/lib/shell/shell';
 import { isSatisfied } from '@/lib/shell/checks';
-import { useAppContext } from '@/context/AppContext';
+import { useAuth } from '@/context/AuthContext';
+import { useProgress } from '@/context/ProgressContext';
+import { loadLocal, mergeSaved, saveLocal } from '@/lessons/saved';
 import { useTheme } from '@/context/ThemeContext';
 import { track } from '@/lib/analytics/posthog';
 import Book, { type QuizState, type TaskState } from './Book';
 import Terminal from './Terminal';
 import FsMap from './FsMap';
 import Nano from './Nano';
+import AccountWall from './AccountWall';
 import s from './workbench.module.css';
 
 const WELCOME: Line[] = [
@@ -19,34 +22,6 @@ const WELCOME: Line[] = [
   [{ text: 'Type help to see what it understands.', tone: 'muted' }],
   [],
 ];
-
-interface Saved {
-  done: string[];
-  quiz: QuizState;
-  finished: boolean;
-  step?: number;
-  /** Furthest step reached. A step with nothing to type counts as done once passed. */
-  furthest?: number;
-}
-
-const storageKey = (id: string) => `tm:lesson:${id}`;
-
-function load(id: string): Saved | null {
-  try {
-    const raw = localStorage.getItem(storageKey(id));
-    return raw ? (JSON.parse(raw) as Saved) : null;
-  } catch {
-    return null;
-  }
-}
-
-function save(id: string, data: Saved) {
-  try {
-    localStorage.setItem(storageKey(id), JSON.stringify(data));
-  } catch {
-    // Storage can be unavailable (private mode). Progress just won't persist.
-  }
-}
 
 export default function Workbench({ lesson }: { lesson: Lesson }) {
   const shellRef = useRef<Shell | null>(null);
@@ -66,7 +41,10 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
   const [view, setView] = useState<'book' | 'machine'>('book');
   const [editor, setEditor] = useState<{ key: number; name: string; content: string; isNew: boolean } | null>(null);
 
-  const { completeLesson } = useAppContext();
+  const { user, initialized } = useAuth();
+  const { syncVersion, push } = useProgress();
+  // Lesson 1 is open to everyone; the rest need a free account, so progress can be saved to it.
+  const locked = lesson.number > 1 && initialized && !user;
   const { theme, toggleTheme } = useTheme();
 
   const sectionCount = lesson.sections.length;
@@ -76,7 +54,7 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
 
   // Restore progress after mount so server and client render the same markup.
   useEffect(() => {
-    const saved = load(lesson.id);
+    const saved = loadLocal(lesson.id);
     if (saved) {
       const restoredDone = new Set(saved.done);
       setDone(restoredDone);
@@ -92,9 +70,24 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
     track('lesson_started', { lesson_id: lesson.id, lesson_title: lesson.title, format: 'workbench' });
   }, [lesson, sectionCount]);
 
+  // After signing in (or on another device), the account may know about progress
+  // this screen doesn't yet. Fold it in without moving the learner.
   useEffect(() => {
-    if (loaded) save(lesson.id, { done: [...done], quiz, finished, step, furthest });
-  }, [loaded, lesson.id, done, quiz, finished, step, furthest]);
+    if (!syncVersion) return;
+    const synced = loadLocal(lesson.id);
+    if (!synced) return;
+    setDone((prev) => new Set([...prev, ...synced.done]));
+    setFinished((prev) => prev || synced.finished);
+    setQuiz((prev) => mergeSaved({ done: [], quiz: prev, finished: false }, synced)!.quiz);
+    setFurthest((prev) => Math.max(prev, synced.furthest ?? 0));
+  }, [syncVersion, lesson.id]);
+
+  useEffect(() => {
+    if (!loaded) return;
+    const saved = { done: [...done], quiz, finished, step, furthest };
+    saveLocal(lesson.id, saved);
+    push(lesson.id, saved);
+  }, [loaded, lesson.id, done, quiz, finished, step, furthest, push]);
 
   useEffect(() => {
     bookRef.current?.scrollTo({ top: 0 });
@@ -172,7 +165,6 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
 
   const finish = () => {
     setFinished(true);
-    completeLesson(lesson.id).catch(() => {});
     track('lesson_completed', { lesson_id: lesson.id, lesson_title: lesson.title, format: 'workbench' });
   };
 
@@ -228,7 +220,7 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
         </button>
       </div>
 
-      <main className={s.main} data-view={view}>
+      <main className={s.main} data-view={view} inert={locked || undefined}>
         <div className={s.book} ref={bookRef}>
           <Book
             lesson={lesson}
@@ -324,6 +316,8 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
           />
         </div>
       </main>
+
+      {locked && <AccountWall lesson={lesson} />}
     </div>
   );
 }

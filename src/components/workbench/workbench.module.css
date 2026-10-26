@@ -919,3 +919,44 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Account wall: lessons 2+ for anyone not signed in ──── */
+
+.wall {
+  position: fixed;
+  inset: 64px 0 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 32px 24px;
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--canvas) 82%, transparent);
+  backdrop-filter: blur(6px);
+}
+.wallInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+  gap: 48px;
+  align-items: center;
+  max-width: 960px;
+  width: 100%;
+}
+.wallEyebrow { font-family: var(--mono); font-size: 14px; color: var(--ink-3); margin: 0 0 12px; }
+.wallTitle {
+  font-family: var(--display);
+  font-size: clamp(28px, 3.6vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  margin: 0 0 20px;
+}
+.wallList { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 10px; }
+.wallList li { font-size: 17px; line-height: 1.5; color: var(--ink-2); }
+.wallList li::before { content: '✓  '; color: var(--done); font-weight: 700; }
+.wallNote { font-size: 15.5px; line-height: 1.6; color: var(--ink-2); margin: 0; }
+.wallNote a { color: var(--accent-ink); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .wall { inset: 52px 0 0; place-items: start center; padding: 24px 16px; }
+  .wallInner { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+}

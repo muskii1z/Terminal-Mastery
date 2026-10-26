@@ -1,19 +1,29 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User as SupabaseUser } from '@supabase/supabase-js';
-import { createClient } from '@/lib/supabase/client';
-import { User, AuthState } from '@/types';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { getSupabase } from '@/lib/supabase/lazy';
+import { track } from '@/lib/analytics/posthog';
+import type { User } from '@/types';
+
+/** Sign-in providers switched on in Supabase. Set NEXT_PUBLIC_AUTH_PROVIDERS, e.g. "google,github". */
+export type Provider = 'google' | 'github';
+export const PROVIDERS: Provider[] = (process.env.NEXT_PUBLIC_AUTH_PROVIDERS ?? '')
+  .split(',')
+  .map((p) => p.trim())
+  .filter((p): p is Provider => p === 'google' || p === 'github');
 
 interface AuthContextValue {
   user: User | null;
-  loading: boolean;
+  /** False until we know whether someone is signed in. */
   initialized: boolean;
-  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+  /** `needsConfirmation` is true when Supabase sent a confirmation email instead of signing in. */
+  signUp: (email: string, password: string, next?: string) => Promise<{ error: Error | null; needsConfirmation: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signInWith: (provider: Provider, next?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
-  resendVerification: (email: string) => Promise<{ error: Error | null }>;
+  resendVerification: (email: string, next?: string) => Promise<{ error: Error | null }>;
   updatePassword: (password: string) => Promise<{ error: Error | null }>;
 }
 
@@ -21,144 +31,123 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const useAuth = (): AuthContextValue => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-function mapSupabaseUser(user: SupabaseUser): User {
+function mapUser(user: SupabaseUser): User {
+  const meta = user.user_metadata ?? {};
   return {
     id: user.id,
-    email: user.email!,
+    email: user.email ?? '',
+    name: (meta.full_name || meta.name || meta.user_name || '') as string,
     created_at: user.created_at,
     email_confirmed_at: user.email_confirmed_at,
   };
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    loading: true,
-    initialized: false,
-  });
+/** Where Supabase sends people back to after an email link or a Google/GitHub sign-in. */
+const callbackUrl = (next = '/lessons') =>
+  `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
 
-  const supabase = createClient();
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    // Get initial session.
-    // Never let a failing/hanging auth backend leave the app stuck on
-    // `initialized: false` -- every consumer renders a blocking "Loading..."
-    // until this settles, so always resolve, even on error or timeout.
-    const getInitialSession = async () => {
-      try {
-        const { data: { session } } = await Promise.race([
-          supabase.auth.getSession(),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('auth getSession timed out')), 5000)
-          ),
-        ]);
-        setAuthState({
-          user: session?.user ? mapSupabaseUser(session.user) : null,
-          loading: false,
-          initialized: true,
+    // Never leave the app waiting on a slow or unreachable auth server:
+    // after 5 seconds, carry on signed out.
+    const timeout = setTimeout(() => setInitialized(true), 5000);
+    let unsubscribe = () => {};
+    let cancelled = false;
+
+    getSupabase()
+      .then(async (supabase) => {
+        if (cancelled) return;
+        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+          setUser(session?.user ? mapUser(session.user) : null);
+          setInitialized(true);
         });
-      } catch (error) {
-        console.warn('[auth] could not restore session; continuing signed out:', error);
-        setAuthState({ user: null, loading: false, initialized: true });
-      }
+        unsubscribe = () => data.subscription.unsubscribe();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        setUser(session?.user ? mapUser(session.user) : null);
+      })
+      .catch((error) => console.warn('[auth] could not restore session; continuing signed out:', error))
+      .finally(() => {
+        clearTimeout(timeout);
+        setInitialized(true);
+      });
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+      unsubscribe();
     };
-
-    getInitialSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setAuthState({
-          user: session?.user ? mapSupabaseUser(session.user) : null,
-          loading: false,
-          initialized: true,
-        });
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
-
-  const signUp = async (email: string, password: string) => {
-    setAuthState(prev => ({ ...prev, loading: true }));
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    setAuthState(prev => ({ ...prev, loading: false }));
-
-    return { error };
-  };
-
-  const signIn = async (email: string, password: string) => {
-    setAuthState(prev => ({ ...prev, loading: true }));
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    setAuthState(prev => ({ ...prev, loading: false }));
-
-    return { error };
-  };
-
-  const signOut = async () => {
-    setAuthState(prev => ({ ...prev, loading: true }));
-    await supabase.auth.signOut();
-    setAuthState(prev => ({ ...prev, loading: false }));
-  };
-
-  const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`
-    });
-
-    return { error };
-  };
-
-  const resendVerification = async (email: string) => {
-    const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email: email
-    });
-    return { error };
-  };
-
-  const updatePassword = async (password: string) => {
-    const { error } = await supabase.auth.updateUser({
-      password: password
-    });
-    return { error };
-  };
+  }, []);
 
   const value: AuthContextValue = {
-    user: authState.user,
-    loading: authState.loading,
-    initialized: authState.initialized,
-    signUp,
-    signIn,
-    signOut,
-    resetPassword,
-    resendVerification,
-    updatePassword,
+    user,
+    initialized,
+
+    signUp: async (email, password, next) => {
+      const supabase = await getSupabase();
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: callbackUrl(next) },
+      });
+      if (!error) track('signed_up', { method: 'email' });
+      return { error, needsConfirmation: !error && !data.session };
+    },
+
+    signIn: async (email, password) => {
+      const supabase = await getSupabase();
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (!error) track('signed_in', { method: 'email' });
+      return { error };
+    },
+
+    signInWith: async (provider, next) => {
+      const supabase = await getSupabase();
+      track('sign_in_started', { method: provider });
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo: callbackUrl(next) },
+      });
+      return { error };
+    },
+
+    signOut: async () => {
+      const supabase = await getSupabase();
+      await supabase.auth.signOut();
+    },
+
+    resetPassword: async (email) => {
+      const supabase = await getSupabase();
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: callbackUrl('/reset-password'),
+      });
+      return { error };
+    },
+
+    resendVerification: async (email, next) => {
+      const supabase = await getSupabase();
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: callbackUrl(next) },
+      });
+      return { error };
+    },
+
+    updatePassword: async (password) => {
+      const supabase = await getSupabase();
+      const { error } = await supabase.auth.updateUser({ password });
+      return { error };
+    },
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

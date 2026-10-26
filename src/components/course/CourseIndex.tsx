@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { LESSONS, PARTS, TOTAL_MINUTES } from '@/lessons';
 import { readStatuses, type LessonStatus } from '@/lessons/progress';
 import CourseTopbar from './CourseTopbar';
+import { useAuth } from '@/context/AuthContext';
+import { useProgress } from '@/context/ProgressContext';
 import s from './course.module.css';
 
 const slug = (part: string) => part.toLowerCase().replace(/\s+/g, '-');
@@ -13,8 +15,12 @@ const hours = (minutes: number) => `about ${Math.round(minutes / 60)} hours`;
 export default function CourseIndex() {
   const [statuses, setStatuses] = useState<Record<string, LessonStatus> | null>(null);
 
-  // Progress lives in this browser, so it's read after the first render.
-  useEffect(() => setStatuses(readStatuses()), []);
+  const { user, initialized } = useAuth();
+  const { syncVersion } = useProgress();
+  const signedOut = initialized && !user;
+
+  // Read after the first render (it lives in the browser), and again whenever the account syncs.
+  useEffect(() => setStatuses(readStatuses()), [syncVersion]);
 
   const statusOf = (id: string): LessonStatus => statuses?.[id] ?? { kind: 'new' };
   const finished = LESSONS.filter((l) => statusOf(l.id).kind === 'done').length;
@@ -30,7 +36,7 @@ export default function CourseIndex() {
       <main className={s.page}>
         <section className={s.hero}>
           <p className={s.meta}>
-            {LESSONS.length} lessons · {hours(TOTAL_MINUTES)} · free, no account
+            {LESSONS.length} lessons · {hours(TOTAL_MINUTES)} · free
           </p>
           <h1 className={s.title}>Learn the terminal by using it.</h1>
           <p className={s.lede}>
@@ -114,7 +120,9 @@ export default function CourseIndex() {
                               ? '✓ Done'
                               : status.kind === 'started'
                                 ? `${status.done} of ${status.total} tasks`
-                                : `${lesson.minutes} min`}
+                                : signedOut && lesson.number > 1
+                                  ? `${lesson.minutes} min · free account`
+                                  : `${lesson.minutes} min`}
                           </span>
                           <span className={s.go} aria-hidden="true">
                             →

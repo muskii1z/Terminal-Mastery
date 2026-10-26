@@ -66,7 +66,7 @@ export default async function OpengraphImage() {
             </div>
 
             <div style={{ display: 'flex', color: '#8b949e', fontSize: 27, marginTop: 28 }}>
-              {COURSE.lessons} lessons &nbsp;·&nbsp; about {COURSE.hours} hours &nbsp;·&nbsp; free, no account
+              {COURSE.lessons} lessons &nbsp;·&nbsp; about {COURSE.hours} hours &nbsp;·&nbsp; free
             </div>
           </div>
         </div>

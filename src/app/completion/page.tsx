@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useProgress } from '@/context/ProgressContext';
 import Certificate from '@/components/ui/Certificate';
 import CourseTopbar from '@/components/course/CourseTopbar';
 import { LESSONS, TOTAL_MINUTES } from '@/lessons';
@@ -17,13 +18,17 @@ const CERTIFICATE_NAME_KEY = 'terminal-mastery-certificate-name';
 let courseCompletionTracked = false;
 
 export default function CompletionPage() {
-  const { user } = useAuth();
+  const { user, initialized } = useAuth();
+  const { syncVersion, syncing } = useProgress();
   const router = useRouter();
   const [finishedAll, setFinishedAll] = useState<boolean | null>(null);
-  // No account required, so the name on the certificate is typed here.
+  // Prefilled from the account where we can; always editable.
   const [name, setName] = useState('');
 
   useEffect(() => {
+    // Wait until we know who's here and their account's progress has arrived,
+    // or someone who finished on another device would be sent away.
+    if (!initialized || syncing || (user && syncVersion === 0)) return;
     const statuses = readStatuses();
     const all = LESSONS.every((l) => statuses[l.id]?.kind === 'done');
     setFinishedAll(all);
@@ -37,11 +42,11 @@ export default function CompletionPage() {
     }
     try {
       const saved = localStorage.getItem(CERTIFICATE_NAME_KEY);
-      setName(saved || user?.email?.split('@')[0] || '');
+      setName(saved || user?.name || '');
     } catch {
-      // localStorage unavailable; the field just starts empty
+      setName(user?.name || '');
     }
-  }, [router, user]);
+  }, [router, user, initialized, syncing, syncVersion]);
 
   if (!finishedAll) return null;
 

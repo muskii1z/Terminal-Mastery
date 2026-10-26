@@ -348,3 +348,13 @@ button.primary { font: inherit; font-size: 17px; font-weight: 600; border: 0; cu
   .section { padding: 24px 20px; }
   .actions > * { width: 100%; }
 }
+
+/* ── Sign-in pages ────────────────────────────────────── */
+
+.authStage {
+  display: grid;
+  place-items: start center;
+  min-height: 60vh;
+  padding-top: 24px;
+}
+button.secondary:disabled { color: var(--done); cursor: default; }

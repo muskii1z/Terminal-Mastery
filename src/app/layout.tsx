@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import { COURSE_LENGTH } from "@/lessons/summary";
 import { Geist, Geist_Mono, IBM_Plex_Sans, IBM_Plex_Mono, Martian_Mono } from "next/font/google";
 import "./globals.css";
-import { AppProvider } from "@/context/AppContext";
+import { ProgressProvider } from "@/context/ProgressContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AnalyticsProvider } from "@/lib/analytics/posthog";
 import { SITE_URL } from "@/lib/site";
-import FloatingBackground from "@/components/ui/FloatingBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +45,7 @@ const martianMono = Martian_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Terminal Mastery: learn the terminal by using it",
-  description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. No account needed.`,
+  description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. Lesson 1 needs no sign-up.`,
   keywords: "linux terminal, command line, terminal tutorial, bash commands, learn terminal, terminal course, linux commands",
   authors: [{ name: "Terminal Mastery" }],
   creator: "Terminal Mastery",
@@ -65,7 +64,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Terminal Mastery: learn the terminal by using it",
-    description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. No account needed.`,
+    description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. Lesson 1 needs no sign-up.`,
     url: SITE_URL,
     siteName: "Terminal Mastery",
     locale: "en_US",
@@ -74,7 +73,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Terminal Mastery: learn the terminal by using it",
-    description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. No account needed.`,
+    description: `A free, hands-on terminal course for complete beginners: ${COURSE_LENGTH}. Type every command into a practice terminal that checks your work. Lesson 1 needs no sign-up.`,
     creator: "@terminal_mastery",
   },
   robots: {
@@ -116,14 +115,9 @@ export default function RootLayout({
         <AnalyticsProvider>
           <ThemeProvider>
           <AuthProvider>
-            <AppProvider>
-              <div className="min-h-screen bg-bg-primary relative">
-                <FloatingBackground />
-                <main>
-                  {children}
-                </main>
-              </div>
-            </AppProvider>
+            <ProgressProvider>
+              <div className="min-h-screen bg-bg-primary relative">{children}</div>
+            </ProgressProvider>
           </AuthProvider>
           </ThemeProvider>
         </AnalyticsProvider>

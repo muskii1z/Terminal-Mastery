@@ -12,22 +12,8 @@ export interface QuizQuestion {
 export interface User {
   id: string;
   email: string;
+  /** From Google or GitHub, or empty for email sign-ups. */
+  name: string;
   created_at: string;
   email_confirmed_at?: string;
-}
-
-export interface AuthState {
-  user: User | null;
-  loading: boolean;
-  initialized: boolean;
-}
-
-export interface UserProgress {
-  userId?: string; // Link progress to authenticated user
-  lessonsCompleted: string[];
-  currentLesson: string | null;
-  quizScores: Record<string, number>;
-  totalProgress: number; // percentage
-  totalLessons?: number;
-  completedCount?: number;
 }
