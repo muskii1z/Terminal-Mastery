@@ -12,16 +12,11 @@
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.57.4",
-    "framer-motion": "^12.23.12",
-    "jspdf": "^3.0.3",
-    "next": "15.5.2",
+    "jspdf": "4.2.1",
+    "next": "15.5.28",
     "posthog-js": "^1.438.13",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-markdown": "^10.1.0",
-    "react-syntax-highlighter": "^15.6.6",
-    "rehype-raw": "^7.0.0",
-    "remark-gfm": "^4.0.1"
+    "react": "19.1.10",
+    "react-dom": "19.1.10"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -29,9 +24,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/react-syntax-highlighter": "^15.5.13",
     "eslint": "^9",
-    "eslint-config-next": "15.5.2",
+    "eslint-config-next": "15.5.28",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

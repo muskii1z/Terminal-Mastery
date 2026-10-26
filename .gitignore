@@ -45,3 +45,6 @@ next-env.d.ts
 
 # compiled tests
 .test-dist/
+
+# Local Netlify folder
+.netlify

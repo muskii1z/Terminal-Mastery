@@ -1,8 +1,7 @@
 # Terminal Mastery — Netlify deploy config
 #
-# NOTE: this app cannot use static export (`output: 'export'`).
-# src/app/lessons/[id] is a dynamic route without generateStaticParams,
-# so it must be server-rendered. The Next.js runtime handles that.
+# Runs on Netlify's Next.js runtime rather than a static export: sign-in
+# needs the /auth/callback route, which runs on the server.
 
 [build]
   command = "npm run build"
