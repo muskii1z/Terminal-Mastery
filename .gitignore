@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Local Netlify folder
 .netlify
+
+# Claude Code local settings (per machine)
+.claude/settings.local.json
