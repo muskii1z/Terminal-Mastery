@@ -358,3 +358,50 @@ button.primary { font: inherit; font-size: 17px; font-weight: 600; border: 0; cu
   padding-top: 24px;
 }
 button.secondary:disabled { color: var(--done); cursor: default; }
+
+/* ── Completion: sharing and testimonial ─────────────── */
+
+.post {
+  margin-top: 28px;
+  padding: 20px;
+  background: var(--canvas);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+.postLabel { font-size: 14px; font-weight: 600; color: var(--ink-2); margin: 0 0 10px; }
+.postText {
+  margin: 0 0 18px;
+  font-family: var(--sans);
+  font-size: 15.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--ink);
+}
+.testimonial { display: grid; gap: 18px; max-width: 620px; }
+.testimonial .field { max-width: none; margin: 0; }
+.field textarea {
+  font: inherit;
+  font-size: 17px;
+  line-height: 1.5;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--canvas);
+  color: var(--ink);
+  resize: vertical;
+}
+.field textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 15.5px; line-height: 1.5; color: var(--ink-2); }
+.check input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); }
+.formError { margin: 0; padding: 12px 14px; border-radius: 10px; color: var(--coral); background: var(--coral-wash); }
+.thanks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: var(--done-wash);
+}
+.thanks p { margin: 0; font-size: 16.5px; }

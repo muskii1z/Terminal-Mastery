@@ -7,6 +7,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useProgress } from '@/context/ProgressContext';
 import Certificate from '@/components/ui/Certificate';
 import CourseTopbar from '@/components/course/CourseTopbar';
+import ShareCourse from '@/components/course/ShareCourse';
+import TestimonialForm from '@/components/course/TestimonialForm';
 import { LESSONS, TOTAL_MINUTES } from '@/lessons';
 import { readStatuses } from '@/lessons/progress';
 import { track } from '@/lib/analytics/posthog';
@@ -131,6 +133,10 @@ export default function CompletionPage() {
             </button>
           </div>
         </section>
+
+        <ShareCourse />
+
+        <TestimonialForm defaultName={certificateName || user?.name || ''} />
 
         <section className={s.section} aria-labelledby="sheet-title">
           <h2 id="sheet-title" className={s.sectionTitle}>
