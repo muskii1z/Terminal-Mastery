@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { getSupabase } from '@/lib/supabase/lazy';
-import { track } from '@/lib/analytics/posthog';
+import { forget, identify, track } from '@/lib/analytics/posthog';
 import type { User } from '@/types';
 
 /** Quick sign-in options, in the order their buttons appear. */
@@ -136,6 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut: async () => {
       const supabase = await getSupabase();
       await supabase.auth.signOut();
+      forget();
     },
 
     resetPassword: async (email) => {
@@ -162,6 +163,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error };
     },
   };
+
+  // Count a signed-in person once, whichever device they're on.
+  useEffect(() => {
+    if (user) identify(user.id);
+  }, [user]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

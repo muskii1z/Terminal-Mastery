@@ -60,6 +60,33 @@ export function track(event: string, properties?: Record<string, unknown>) {
   }
 }
 
+/**
+ * Tie this visitor's events to their account, so one person on a laptop and
+ * a phone counts once. Uses the account id only, never the email.
+ */
+export function identify(userId: string) {
+  if (!KEY || typeof window === 'undefined') return;
+  void start().then(() => {
+    try {
+      if (client && client.get_distinct_id() !== userId) client.identify(userId);
+    } catch {
+      // Analytics must never break the lesson.
+    }
+  });
+}
+
+/** After signing out, start counting as a new anonymous visitor. */
+export function forget() {
+  if (!KEY || typeof window === 'undefined') return;
+  void start().then(() => {
+    try {
+      client?.reset();
+    } catch {
+      // Analytics must never break the lesson.
+    }
+  });
+}
+
 const AnalyticsContext = createContext<{ track: typeof track }>({ track });
 
 export const useAnalytics = () => useContext(AnalyticsContext);
