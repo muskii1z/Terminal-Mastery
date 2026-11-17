@@ -29,8 +29,14 @@ export function getEnabledProviders(): Promise<Provider[]> {
 
 interface AuthContextValue {
   user: User | null;
-  /** False until we know whether someone is signed in. */
+  /** False until we know whether someone is signed in, and whether accounts can be reached. */
   initialized: boolean;
+  /**
+   * Whether the account service can be reached right now. When it can't
+   * (an outage, or the database paused), the course keeps working with
+   * progress saved in the browser.
+   */
+  available: boolean;
   /** `needsConfirmation` is true when Supabase sent a confirmation email instead of signing in. */
   signUp: (email: string, password: string, next?: string) => Promise<{ error: Error | null; needsConfirmation: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -60,18 +66,52 @@ function mapUser(user: SupabaseUser): User {
   };
 }
 
+/** Ask the account service if it's up. Resolves false on any failure or after 4 seconds. */
+async function accountsReachable(): Promise<boolean> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) return false;
+  try {
+    const response = await fetch(`${url}/auth/v1/health`, {
+      headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '' },
+      signal: AbortSignal.timeout(4000),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+/** True for errors that mean the server couldn't be reached, as opposed to a wrong password. */
+const unreachable = (error: { message?: string } | null) =>
+  Boolean(error?.message && /fetch|network|load failed|timed? ?out/i.test(error.message));
+
 /** Where Supabase sends people back to after an email link or a Google/GitHub sign-in. */
 const callbackUrl = (next = '/lessons') =>
   `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [initialized, setInitialized] = useState(false);
+  const [sessionKnown, setSessionKnown] = useState(false);
+  /** null until the health check answers. */
+  const [available, setAvailable] = useState<boolean | null>(null);
+  const initialized = sessionKnown && available !== null;
+
+  useEffect(() => {
+    let cancelled = false;
+    accountsReachable().then((ok) => {
+      if (cancelled) return;
+      setAvailable(ok);
+      if (!ok) console.warn('[auth] account service unreachable; lessons stay open and progress is kept in this browser');
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     // Never leave the app waiting on a slow or unreachable auth server:
     // after 5 seconds, carry on signed out.
-    const timeout = setTimeout(() => setInitialized(true), 5000);
+    const timeout = setTimeout(() => setSessionKnown(true), 5000);
     let unsubscribe = () => {};
     let cancelled = false;
 
@@ -80,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
         const { data } = supabase.auth.onAuthStateChange((_event, session) => {
           setUser(session?.user ? mapUser(session.user) : null);
-          setInitialized(true);
+          setSessionKnown(true);
         });
         unsubscribe = () => data.subscription.unsubscribe();
         const {
@@ -91,7 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .catch((error) => console.warn('[auth] could not restore session; continuing signed out:', error))
       .finally(() => {
         clearTimeout(timeout);
-        setInitialized(true);
+        setSessionKnown(true);
       });
 
     return () => {
@@ -104,6 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextValue = {
     user,
     initialized,
+    available: available ?? false,
 
     signUp: async (email, password, next) => {
       const supabase = await getSupabase();
@@ -112,6 +153,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
         options: { emailRedirectTo: callbackUrl(next) },
       });
+      if (unreachable(error)) setAvailable(false);
       if (!error) track('signed_up', { method: 'email' });
       return { error, needsConfirmation: !error && !data.session };
     },
@@ -119,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signIn: async (email, password) => {
       const supabase = await getSupabase();
       const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (unreachable(error)) setAvailable(false);
       if (!error) track('signed_in', { method: 'email' });
       return { error };
     },

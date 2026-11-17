@@ -8,6 +8,7 @@ import { isSatisfied } from '@/lib/shell/checks';
 import { useAuth } from '@/context/AuthContext';
 import { useProgress } from '@/context/ProgressContext';
 import { loadLocal, mergeSaved, saveLocal } from '@/lessons/saved';
+import { needsAccount } from '@/lessons/access';
 import { useTheme } from '@/context/ThemeContext';
 import { track } from '@/lib/analytics/posthog';
 import Book, { type QuizState, type TaskState } from './Book';
@@ -41,10 +42,12 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
   const [view, setView] = useState<'book' | 'machine'>('book');
   const [editor, setEditor] = useState<{ key: number; name: string; content: string; isNew: boolean } | null>(null);
 
-  const { user, initialized } = useAuth();
+  const { user, initialized, available } = useAuth();
   const { syncVersion, push } = useProgress();
   // Lesson 1 is open to everyone; the rest need a free account, so progress can be saved to it.
-  const locked = lesson.number > 1 && initialized && !user;
+  const locked = needsAccount({ lessonNumber: lesson.number, initialized, signedIn: Boolean(user), accountsAvailable: available });
+  const [noteDismissed, setNoteDismissed] = useState(false);
+  const showOfflineNote = initialized && !available && !noteDismissed;
   const { theme, toggleTheme } = useTheme();
 
   const sectionCount = lesson.sections.length;
@@ -318,6 +321,19 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
       </main>
 
       {locked && <AccountWall lesson={lesson} />}
+
+      {showOfflineNote && (
+        <div className={s.offlineNote} role="status">
+          <p>
+            {user
+              ? 'We can’t reach your account right now. Your progress is saved in this browser and will sync when it’s back.'
+              : 'Accounts are briefly unavailable, so every lesson is open. Your progress is saved in this browser.'}
+          </p>
+          <button type="button" onClick={() => setNoteDismissed(true)} aria-label="Dismiss">
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 }

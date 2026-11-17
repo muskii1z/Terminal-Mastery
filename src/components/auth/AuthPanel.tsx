@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { getEnabledProviders, useAuth, type Provider } from '@/context/AuthContext';
 import s from './auth.module.css';
 
@@ -36,7 +37,7 @@ function explain(message: string): string {
 }
 
 export default function AuthPanel({ initialMode = 'signup', next, title, lede, initialError = '' }: AuthPanelProps) {
-  const { signUp, signIn, signInWith, resetPassword, resendVerification } = useAuth();
+  const { signUp, signIn, signInWith, resetPassword, resendVerification, available, initialized } = useAuth();
   const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -83,6 +84,21 @@ export default function AuthPanel({ initialMode = 'signup', next, title, lede, i
     const { error } = await signInWith(provider, next);
     if (error) setError(explain(error.message));
   };
+
+  if (initialized && !available) {
+    return (
+      <div className={s.panel}>
+        <h2 className={s.title}>Sign-in is briefly unavailable</h2>
+        <p className={s.lede}>
+          We can’t reach the account service right now. You don’t need to wait: every lesson is open, and your progress
+          is saved in this browser. When sign-in is back, create an account and your progress comes with you.
+        </p>
+        <Link href="/lessons" className={s.primaryLink}>
+          Keep learning
+        </Link>
+      </div>
+    );
+  }
 
   if (sent) {
     return (

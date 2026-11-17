@@ -960,3 +960,38 @@
   .wall { inset: 52px 0 0; place-items: start center; padding: 24px 16px; }
   .wallInner { grid-template-columns: minmax(0, 1fr); gap: 24px; }
 }
+
+/* ── Note when accounts can't be reached ─────────────── */
+
+.offlineNote {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 25;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 420px;
+  padding: 14px 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--pane);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px -12px rgb(15 23 42 / 0.35);
+}
+.offlineNote p { margin: 0; }
+.offlineNote button {
+  flex: none;
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink-3);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.offlineNote button:hover { color: var(--ink); }

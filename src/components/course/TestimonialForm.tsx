@@ -15,12 +15,15 @@ export default function TestimonialForm({ defaultName }: { defaultName: string }
   const [mayPublish, setMayPublish] = useState(true);
   const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [hadOne, setHadOne] = useState(false);
+  // Hidden until we know the testimonials table exists (database/2026-10-28-testimonials.sql).
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     getSupabase()
       .then(fetchMyTestimonial)
       .then((existing) => {
+        setReady(true);
         if (!existing) return;
         setQuote(existing.quote);
         setDisplayName(existing.displayName);
@@ -28,7 +31,8 @@ export default function TestimonialForm({ defaultName }: { defaultName: string }
         setHadOne(true);
       })
       .catch(() => {
-        // No saved testimonial to show; the empty form still works.
+        // Table missing or accounts unreachable: leave the form out rather than let it fail.
+        setReady(false);
       });
   }, [user]);
 
@@ -36,7 +40,7 @@ export default function TestimonialForm({ defaultName }: { defaultName: string }
     setDisplayName((current) => current || defaultName);
   }, [defaultName]);
 
-  if (!user) return null;
+  if (!user || !ready) return null;
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();

@@ -15,9 +15,9 @@ const hours = (minutes: number) => `about ${Math.round(minutes / 60)} hours`;
 export default function CourseIndex() {
   const [statuses, setStatuses] = useState<Record<string, LessonStatus> | null>(null);
 
-  const { user, initialized } = useAuth();
+  const { user, initialized, available } = useAuth();
   const { syncVersion } = useProgress();
-  const signedOut = initialized && !user;
+  const signedOut = initialized && !user && available;
 
   // Read after the first render (it lives in the browser), and again whenever the account syncs.
   useEffect(() => setStatuses(readStatuses()), [syncVersion]);
