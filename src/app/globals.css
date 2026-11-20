@@ -81,6 +81,11 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Nothing may make a phone screen scroll sideways. */
+html {
+  overflow-x: clip;
+}
+
 /* Cyberpunk glow utilities */
 .glow-blue {
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);

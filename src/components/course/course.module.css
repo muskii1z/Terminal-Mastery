@@ -54,8 +54,10 @@
   border-radius: 6px;
   padding: 3px 6px;
 }
-.topbarEnd { display: flex; align-items: center; gap: 12px; }
+.topbarEnd { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.topbarExtra { display: contents; }
 .topbarLink {
+  white-space: nowrap;
   color: var(--ink-2);
   font-size: 15px;
   text-decoration: none;
@@ -74,6 +76,7 @@
   cursor: pointer;
 }
 .themeButton:hover { color: var(--ink); border-color: var(--ink-3); }
+.themeIcon { display: none; }
 
 .page {
   max-width: 920px;
@@ -251,7 +254,14 @@
 .lesson[data-next] .go { color: var(--accent-ink); }
 
 @media (max-width: 640px) {
-  .topbar { height: 56px; padding: 0 16px; }
+  .topbar { height: 56px; padding: 0 16px; gap: 10px; }
+  .brand { font-size: 15px; gap: 8px; }
+  .topbarEnd { gap: 4px; }
+  .topbarLink { padding: 8px 10px; }
+  /* The theme switch becomes an icon so the bar fits on a phone. */
+  .themeButton { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; }
+  .themeText { display: none; }
+  .themeIcon { display: block; }
   .page { padding: 20px 16px 64px; }
   .hero { padding: 24px 20px; }
   .lede { font-size: 16.5px; }
@@ -300,7 +310,7 @@
   color: var(--ink);
 }
 .field input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-.certificate { overflow-x: auto; margin: 0 -8px 24px; border-radius: 12px; }
+.certificate { overflow-x: auto; margin: 0 0 24px; border-radius: 12px; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .secondary {
   display: inline-flex;
@@ -405,3 +415,8 @@ button.secondary:disabled { color: var(--done); cursor: default; }
   background: var(--done-wash);
 }
 .thanks p { margin: 0; font-size: 16.5px; }
+
+/* Very narrow phones: drop the extra link (the page has its own button for it). */
+@media (max-width: 400px) {
+  .topbarExtra { display: none; }
+}

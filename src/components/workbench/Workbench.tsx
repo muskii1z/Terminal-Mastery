@@ -16,6 +16,7 @@ import Terminal from './Terminal';
 import FsMap from './FsMap';
 import Nano from './Nano';
 import AccountWall from './AccountWall';
+import ThemeIcon from '@/components/ui/ThemeIcon';
 import s from './workbench.module.css';
 
 const WELCOME: Line[] = [
@@ -31,6 +32,29 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const bookRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  // On phones the keyboard covers the bottom of the screen, and iOS doesn't resize the page for it.
+  // Fit the lesson to the part that's still visible, so the terminal's input stays in view while typing.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const el = rootRef.current;
+    if (!vv || !el) return;
+    const fit = () => {
+      const covered = window.innerHeight - vv.height > 80;
+      el.style.height = covered ? `${vv.height}px` : '';
+      el.style.top = covered ? `${vv.offsetTop}px` : '';
+      el.style.bottom = covered ? 'auto' : '';
+    };
+    fit();
+    vv.addEventListener('resize', fit);
+    vv.addEventListener('scroll', fit);
+    return () => {
+      vv.removeEventListener('resize', fit);
+      vv.removeEventListener('scroll', fit);
+      el.style.height = el.style.top = el.style.bottom = '';
+    };
+  }, []);
   const [lines, setLines] = useState<Line[]>(WELCOME);
   const [version, setVersion] = useState(0);
   const [done, setDone] = useState<Set<string>>(new Set());
@@ -178,7 +202,7 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
   };
 
   return (
-    <div className={s.root}>
+    <div className={s.root} ref={rootRef}>
       <header className={s.topbar}>
         <Link href="/lessons" className={s.back}>
           <span aria-hidden="true">←</span> Lessons
@@ -200,7 +224,8 @@ export default function Workbench({ lesson }: { lesson: Lesson }) {
             onClick={toggleTheme}
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {theme === 'dark' ? 'Light' : 'Dark'}
+            <span className={s.themeText}>{theme === 'dark' ? 'Light' : 'Dark'}</span>
+            <ThemeIcon theme={theme} className={s.themeIcon} />
           </button>
         </div>
       </header>

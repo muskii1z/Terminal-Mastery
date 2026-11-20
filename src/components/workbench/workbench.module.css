@@ -637,6 +637,7 @@
   cursor: pointer;
 }
 .themeButton:hover { color: var(--ink); border-color: var(--ink-3); }
+.themeIcon { display: none; }
 
 /* The map — the file system drawn the way `tree` draws it. */
 .map {
@@ -904,6 +905,19 @@
   .railList { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .machine { padding: 10px; }
   .map { max-height: 30%; }
+}
+
+@media (max-width: 640px) {
+  .topbar { gap: 8px; padding: 0 12px 0 16px; }
+  .themeButton { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; }
+  .themeText { display: none; }
+  .themeIcon { display: block; }
+  .crumbTitle { font-size: 16px; }
+  /* The "what to do now" bar stacks: the text gets the full width, the Next button sits under it. */
+  .now { grid-template-columns: auto 1fr; gap: 10px 12px; padding: 12px 14px; }
+  .now > :nth-child(3):not(:empty) { grid-column: 1 / -1; width: 100%; }
+  .nowText { font-size: 16px; }
+  .nowHint { grid-column: 1 / -1; }
 }
 
 @media (max-width: 420px) {

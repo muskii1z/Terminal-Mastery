@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
+import ThemeIcon from '@/components/ui/ThemeIcon';
 import s from './course.module.css';
 
 /** The top bar on course pages outside a lesson: the name, home link and theme switch. */
@@ -17,7 +18,7 @@ export default function CourseTopbar({ children }: { children?: React.ReactNode 
         Terminal Mastery
       </Link>
       <div className={s.topbarEnd}>
-        {children}
+        {children && <span className={s.topbarExtra}>{children}</span>}
         {initialized && (
           <Link href={user ? '/account' : '/login'} className={s.topbarLink}>
             {user ? 'Account' : 'Sign in'}
@@ -29,7 +30,8 @@ export default function CourseTopbar({ children }: { children?: React.ReactNode 
           onClick={toggleTheme}
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {theme === 'dark' ? 'Light' : 'Dark'}
+          <span className={s.themeText}>{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          <ThemeIcon theme={theme} className={s.themeIcon} />
         </button>
       </div>
     </header>

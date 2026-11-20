@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { COURSE_LENGTH } from "@/lessons/summary";
 import { Geist, Geist_Mono, IBM_Plex_Sans, IBM_Plex_Mono, Martian_Mono } from "next/font/google";
 import "./globals.css";
@@ -41,6 +41,14 @@ const martianMono = Martian_Mono({
   display: "swap",
   preload: false,
 });
+
+// interactiveWidget: on Android the keyboard shrinks the page instead of covering the terminal.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-content',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

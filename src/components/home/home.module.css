@@ -404,3 +404,5 @@
 @media (prefers-reduced-motion: reduce) {
   .cursor { animation: none; }
 }
+
+.nowrap { white-space: nowrap; }

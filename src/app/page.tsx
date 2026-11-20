@@ -85,7 +85,9 @@ export default function Home() {
         <section className={s.hero} aria-labelledby="hero-title">
           <div className={s.heroCopy}>
             <p className={s.eyebrow}>
-              <span className={s.prompt}>$</span> a free course · {COURSE.lessons} lessons · about {COURSE.hours} hours
+              <span className={s.prompt}>$</span> <span className={s.nowrap}>a free course</span> ·{' '}
+              <span className={s.nowrap}>{COURSE.lessons} lessons</span> ·{' '}
+              <span className={s.nowrap}>about {COURSE.hours} hours</span>
             </p>
             <h1 id="hero-title" className={s.title}>
               Even senior engineers wing it in the terminal.
